@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { CartItem } from '@/lib/cart';
 import { useRouter } from 'next/navigation';
 
@@ -21,7 +22,14 @@ export default function Cart({
   onClearCart 
 }: CartProps) {
   const router = useRouter();
+  const [isAnimating, setIsAnimating] = useState(false);
   
+  useEffect(() => {
+    if (isOpen) {
+      setIsAnimating(true);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const totalPrice = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
@@ -35,9 +43,18 @@ export default function Cart({
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      {/* Backdrop with fade-in animation */}
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-out"
+        onClick={onClose} 
+      />
       
-      <div className="absolute right-0 top-0 h-full w-full max-w-md">
+      {/* Cart panel with slide-in animation */}
+      <div 
+        className={`absolute right-0 top-0 h-full w-full max-w-md transform transition-transform duration-300 ease-out ${
+          isAnimating ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
         <div className="h-full backdrop-blur-xl bg-white/20 border-l border-white/30 shadow-3xl shadow-black/40">
           <div className="flex items-center justify-between p-6 border-b border-white/20">
             <h2 className="text-2xl font-light text-white drop-shadow-md">Shopping Cart</h2>
@@ -82,10 +99,14 @@ export default function Cart({
               </div>
             ) : (
               <div className="space-y-4">
-                {items.map((item) => (
+                {items.map((item, index) => (
                   <div
                     key={item.product.id}
                     className="backdrop-blur-xl bg-white/20 border border-white/30 rounded-xl p-4 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 transition-all duration-200"
+                    style={{ 
+                      animationDelay: `${index * 100}ms`,
+                      animation: `slideInRight 0.5s ease-out ${index * 100}ms both`
+                    }}
                   >
                     <div className="flex gap-4">
                       <img

@@ -430,6 +430,45 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Bestsellers Section */}
+        <section 
+          ref={bestsellersRef} 
+          data-section="bestsellers" 
+          className={`py-12 md:py-20 px-4 transition-all duration-1000 ${
+            animateSections.bestsellers ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
+          }`}
+        >
+          <div className="container mx-auto">
+            <div className="text-center mb-12 md:mb-16">
+              <h2 className="text-3xl md:text-5xl font-light text-[#7C805A] mb-4 md:mb-6 font-elegant drop-shadow-xl">
+                Bestsellers
+              </h2>
+              <p className="text-lg md:text-xl text-[#7C805A] font-light max-w-3xl mx-auto drop-shadow-lg px-4">
+                Our most loved pieces by customers worldwide
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {bestsellers.map((product, index) => (
+                <div
+                  key={product.id}
+                  className={`transition-all duration-700 animate-optimized hover-lift ${
+                    animateSections.bestsellers 
+                      ? 'opacity-100 translate-y-0' 
+                      : 'opacity-100 translate-y-0'
+                  }`}
+                  style={{ transitionDelay: `${index * 150}ms` }}
+                >
+                  <ProductCard
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Featured Products Section */}
         <section 
           ref={featuredRef} 
@@ -469,44 +508,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Bestsellers Section */}
-        <section 
-          ref={bestsellersRef} 
-          data-section="bestsellers" 
-          className={`py-12 md:py-20 px-4 transition-all duration-1000 ${
-            animateSections.bestsellers ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
-          }`}
-        >
-          <div className="container mx-auto">
-            <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-3xl md:text-5xl font-light text-[#7C805A] mb-4 md:mb-6 font-elegant drop-shadow-xl">
-                Bestsellers
-              </h2>
-              <p className="text-lg md:text-xl text-[#7C805A] font-light max-w-3xl mx-auto drop-shadow-lg px-4">
-                Our most loved pieces by customers worldwide
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {bestsellers.map((product, index) => (
-                <div
-                  key={product.id}
-                  className={`transition-all duration-700 animate-optimized hover-lift ${
-                    animateSections.bestsellers 
-                      ? 'opacity-100 translate-y-0' 
-                      : 'opacity-100 translate-y-0'
-                  }`}
-                  style={{ transitionDelay: `${index * 150}ms` }}
-                >
-                  <ProductCard
-                    product={product}
-                    onAddToCart={handleAddToCart}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        
       </main>
 
       <Footer />

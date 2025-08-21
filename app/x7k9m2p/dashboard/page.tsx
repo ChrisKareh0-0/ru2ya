@@ -10,6 +10,13 @@ export default function AdminDashboard() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
+  const [countdownData, setCountdownData] = useState({
+    title: 'Limited Time Offer',
+    targetDate: '2024-12-31',
+    targetTime: '23:59',
+    isVisible: true
+  });
+  const [countdownMessage, setCountdownMessage] = useState('');
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -28,6 +35,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     console.log('🔄 Admin dashboard useEffect triggered');
     fetchProducts();
+    fetchCountdownData();
   }, []);
 
   // Clear message after 3 seconds
@@ -251,6 +259,42 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchCountdownData = async () => {
+    try {
+      const response = await fetch('/api/admin/countdown');
+      if (response.ok) {
+        const data = await response.json();
+        setCountdownData(data);
+      }
+    } catch (error) {
+      console.error('Error fetching countdown data:', error);
+    }
+  };
+
+  const updateCountdown = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/admin/countdown', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(countdownData),
+      });
+
+      if (response.ok) {
+        setCountdownMessage('Countdown updated successfully!');
+        setTimeout(() => setCountdownMessage(''), 3000);
+      } else {
+        const errorData = await response.json();
+        setCountdownMessage(`Error: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error('Error updating countdown:', error);
+      setCountdownMessage('Error: Failed to update countdown');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
@@ -294,6 +338,88 @@ export default function AdminDashboard() {
               <p className="text-[#7C805A] font-light text-center">{message}</p>
             </div>
           )}
+
+          {/* Countdown Control Section */}
+          <div className="mb-8 bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl p-6 shadow-2xl shadow-black/20">
+            <h2 className="text-2xl font-light text-[#7C805A] mb-6 font-elegant">Countdown Timer Control</h2>
+            
+            {countdownMessage && (
+              <div className="mb-4 p-3 bg-white/20 border border-white/30 rounded-lg">
+                <p className="text-[#7C805A] font-light text-center">{countdownMessage}</p>
+              </div>
+            )}
+
+            <form onSubmit={updateCountdown} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-[#7C805A] font-light mb-2">Countdown Title</label>
+                <input
+                  type="text"
+                  value={countdownData.title}
+                  onChange={(e) => setCountdownData({ ...countdownData, title: e.target.value })}
+                  className="w-full px-4 py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                  placeholder="e.g., Limited Time Offer"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-[#7C805A] font-light mb-2">Target Date</label>
+                <input
+                  type="date"
+                  value={countdownData.targetDate}
+                  onChange={(e) => setCountdownData({ ...countdownData, targetDate: e.target.value })}
+                  className="w-full px-4 py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-[#7C805A] font-light mb-2">Target Time</label>
+                <input
+                  type="time"
+                  value={countdownData.targetTime}
+                  onChange={(e) => setCountdownData({ ...countdownData, targetTime: e.target.value })}
+                  className="w-full px-4 py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={countdownData.isVisible}
+                    onChange={(e) => setCountdownData({ ...countdownData, isVisible: e.target.checked })}
+                    className="mr-3 h-5 w-5 text-[#7C805A] focus:ring-[#7C805A] border-white/40 rounded"
+                  />
+                  <span className="text-[#7C805A] font-light">Show Countdown in Navbar</span>
+                </label>
+              </div>
+
+              <div className="md:col-span-2">
+                <button
+                  type="submit"
+                  className="w-full py-3 px-6 bg-[#7C805A] hover:bg-[#6A7150] text-[#F5E6D3] rounded-xl transition-all duration-200 font-light shadow-lg shadow-black/30"
+                >
+                  Update Countdown
+                </button>
+              </div>
+            </form>
+
+            {/* Preview */}
+            <div className="mt-6 p-4 bg-white/10 rounded-lg border border-white/20">
+              <h3 className="text-[#7C805A] font-light mb-3">Preview:</h3>
+              <div className="text-center">
+                <h4 className="text-sm font-light text-[#7C805A] mb-2">{countdownData.title}</h4>
+                <div className="text-xs text-[#7C805A]/70">
+                  Target: {countdownData.targetDate} at {countdownData.targetTime}
+                </div>
+                <div className="text-xs text-[#7C805A]/70 mt-1">
+                  Status: {countdownData.isVisible ? '✅ Visible' : '❌ Hidden'}
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Add Product Button */}
           <div className="mb-6">

@@ -227,7 +227,7 @@ export default function ProductsPage() {
 
                 {/* Filter Popup */}
                 {showFilters && (
-                  <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-10">
+                  <div className="filter-container absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-10">
                     <div className="space-y-4">
                       {/* Category Filter */}
                       <div>

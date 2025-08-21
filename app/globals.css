@@ -57,6 +57,19 @@ img {
     transform: translateZ(0);
     contain: layout style paint;
   }
+  
+  /* Gallery sliding animations */
+  .gallery-slide-left {
+    transform: translateX(-100%);
+  }
+  
+  .gallery-slide-right {
+    transform: translateX(100%);
+  }
+  
+  .gallery-slide-center {
+    transform: translateX(0);
+  }
 }
 
 /* Mobile touch target optimizations */

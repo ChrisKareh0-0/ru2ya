@@ -18,9 +18,9 @@ export default function HomePage() {
   const [bestsellers, setBestsellers] = useState<Product[]>([]);
   const [animateLogo, setAnimateLogo] = useState(false);
   const [animateSections, setAnimateSections] = useState({
-    gallery: true,
-    featured: true,
-    bestsellers: true
+    gallery: false,
+    featured: false,
+    bestsellers: false
   });
   
   const router = useRouter();
@@ -39,35 +39,113 @@ export default function HomePage() {
     return () => clearTimeout(timer);
   }, [cartManager]);
 
+  // Reset animation states on page load
+  useEffect(() => {
+    setAnimateSections({
+      gallery: false,
+      featured: false,
+      bestsellers: false
+    });
+  }, []);
+
   // Intersection Observer for scroll animations
   useEffect(() => {
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -100px 0px'
+    console.log('🔧 Setting up intersection observer...');
+    
+    // Add a small delay to ensure refs are properly set
+    const timer = setTimeout(() => {
+      const observerOptions = {
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+        rootMargin: '0px 0px -200px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        console.log('👁️ Intersection observer triggered with', entries.length, 'entries');
+        entries.forEach((entry) => {
+          console.log('📊 Entry:', entry.target.getAttribute('data-section'), 'isIntersecting:', entry.isIntersecting, 'ratio:', entry.intersectionRatio);
+          if (entry.isIntersecting) {
+            const sectionId = entry.target.getAttribute('data-section');
+            console.log('🎬 Section visible:', sectionId, 'intersection ratio:', entry.intersectionRatio);
+            if (sectionId) {
+              // Trigger entrance animation when section comes into view
+              setAnimateSections(prev => {
+                console.log('🎭 Setting animation for:', sectionId, 'to true. Previous state:', prev);
+                return {
+                  ...prev,
+                  [sectionId]: true
+                };
+              });
+            }
+          }
+        });
+      }, observerOptions);
+
+      // Observe all sections
+      if (galleryRef.current) {
+        console.log('👁️ Observing gallery section:', galleryRef.current);
+        observer.observe(galleryRef.current);
+      } else {
+        console.log('❌ Gallery ref is null!');
+      }
+      if (featuredRef.current) {
+        console.log('👁️ Observing featured section');
+        observer.observe(featuredRef.current);
+      }
+      if (bestsellersRef.current) {
+        console.log('👁️ Observing bestsellers section');
+        observer.observe(bestsellersRef.current);
+      }
+
+      return () => {
+        console.log('🧹 Cleaning up intersection observer');
+        observer.disconnect();
+      };
+    }, 100); // 100ms delay
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Scroll-based animation trigger (backup to intersection observer)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (galleryRef.current) {
+        const rect = galleryRef.current.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+        
+        if (isVisible && !animateSections.gallery) {
+          console.log('📜 Scroll detected gallery section, triggering animation');
+          setAnimateSections(prev => ({
+            ...prev,
+            gallery: true
+          }));
+        }
+      }
     };
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const sectionId = entry.target.getAttribute('data-section');
-          if (sectionId) {
-            // Only trigger entrance animation if not already animated
-            setAnimateSections(prev => ({
-              ...prev,
-              [sectionId]: true
-            }));
-          }
-        }
-      });
-    }, observerOptions);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [animateSections.gallery]);
 
-    // Observe all sections
-    if (galleryRef.current) observer.observe(galleryRef.current);
-    if (featuredRef.current) observer.observe(featuredRef.current);
-    if (bestsellersRef.current) observer.observe(bestsellersRef.current);
+  // Check if gallery is already visible on mount
+  useEffect(() => {
+    if (galleryRef.current) {
+      const rect = galleryRef.current.getBoundingClientRect();
+      const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+      
+      if (isVisible && !animateSections.gallery) {
+        console.log('🚀 Gallery section already visible on mount, triggering animation');
+        setAnimateSections(prev => ({
+          ...prev,
+          gallery: true
+        }));
+      }
+    }
+  }, [animateSections.gallery]);
 
-    return () => observer.disconnect();
-  }, []);
+  // Debug animation state
+  useEffect(() => {
+    console.log('🎭 Current animation state:', animateSections);
+  }, [animateSections]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -191,7 +269,8 @@ export default function HomePage() {
             <p className={`text-2xl md:text-3xl text-[#7C805A] max-w-4xl mx-auto font-light drop-shadow-lg mb-12 transition-all duration-1000 delay-1000 ${
               animateLogo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
-              Discover the perfect blend of style and comfort with our premium eyewear collection
+              A Dream. A Vision. A Way Of Seeing The World.
+
             </p>
             <button
               onClick={() => router.push('/products')}
@@ -209,7 +288,7 @@ export default function HomePage() {
         <section 
           ref={galleryRef} 
           data-section="gallery" 
-          className={`py-12 md:py-20 px-4 relative mt-20 md:mt-40 transition-all duration-1000 ${
+          className={`py-12 md:py-20 px-4 relative mt-20 md:mt-40 transition-all duration-1000 overflow-hidden ${
             animateSections.gallery ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
           }`}
         >
@@ -221,14 +300,33 @@ export default function HomePage() {
               <p className="text-lg md:text-xl text-[#7C805A] font-light max-w-3xl mx-auto drop-shadow-lg px-4">
                 Experience the artistry and craftsmanship behind every piece
               </p>
+              {/* Temporary debug info */}
+              {/* <div className="mt-4 text-sm text-[#7C805A] space-y-2">
+                <div>Gallery Ref: {galleryRef.current ? '✅ Set' : '❌ Null'}</div>
+                <div>Animation State: {animateSections.gallery ? '✅ Active' : '❌ Inactive'}</div>
+                <button 
+                  onClick={() => {
+                    console.log('🔘 Manual trigger clicked');
+                    setAnimateSections(prev => ({ ...prev, gallery: !prev.gallery }));
+                  }}
+                  className="px-4 py-2 bg-[#7C805A] text-white rounded-lg"
+                >
+                  Manual Trigger
+                </button>
+              </div> */}
             </div>
             
             {/* Main Gallery Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6 mb-6 md:mb-8">
               {/* Large Left Image */}
-              <div className={`md:col-span-2 lg:col-span-8 h-[300px] md:h-[400px] lg:h-[500px] transition-all duration-700 delay-200 animate-optimized ${
-                animateSections.gallery ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
-              }`}>
+              <div 
+                className={`md:col-span-2 lg:col-span-8 h-[300px] md:h-[400px] lg:h-[500px] transition-all duration-1000 delay-200 animate-optimized ${
+                  animateSections.gallery ? 'translate-x-0' : '-translate-x-full'
+                }`}
+                style={{
+                  transform: animateSections.gallery ? 'translateX(0)' : 'translateX(-100%)'
+                }}
+              >
                 <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
                   <img
                     src="/gallery/wallpaperflare.com_wallpaper.jpg"
@@ -243,10 +341,15 @@ export default function HomePage() {
               
               {/* Right Column - Two Stacked Images */}
               <div className="md:col-span-2 lg:col-span-4 space-y-4 md:space-y-6">
-                              {/* Top Right Image */}
-              <div className={`h-[180px] md:h-[200px] lg:h-[240px] transition-all duration-700 delay-400 animate-optimized ${
-                animateSections.gallery ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
-              }`}>
+                {/* Top Right Image */}
+                <div 
+                  className={`h-[180px] md:h-[200px] lg:h-[240px] transition-all duration-1000 delay-400 animate-optimized ${
+                    animateSections.gallery ? 'translate-x-0' : 'translate-x-full'
+                  }`}
+                  style={{
+                    transform: animateSections.gallery ? 'translateX(0)' : 'translateX(100%)'
+                  }}
+                >
                   <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
                     <img
                       src="/gallery/wallpaperflare.com_wallpaper (1).jpg"
@@ -260,9 +363,14 @@ export default function HomePage() {
                 </div>
                 
                 {/* Bottom Right Image */}
-                <div className={`h-[180px] md:h-[200px] lg:h-[240px] transition-all duration-700 delay-600 animate-optimized ${
-                  animateSections.gallery ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
-                }`}>
+                <div 
+                  className={`h-[180px] md:h-[200px] lg:h-[240px] transition-all duration-1000 delay-600 animate-optimized ${
+                    animateSections.gallery ? 'translate-x-0' : 'translate-x-full'
+                  }`}
+                  style={{
+                    transform: animateSections.gallery ? 'translateX(0)' : 'translateX(100%)'
+                  }}
+                >
                   <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
                     <img
                       src="/gallery/wallpaperflare.com_wallpaper (2).jpg"
@@ -279,9 +387,14 @@ export default function HomePage() {
             
             {/* Bottom Row - Two Medium Images */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-              <div className={`h-[250px] md:h-[300px] lg:h-[350px] transition-all duration-700 delay-800 animate-optimized ${
-                animateSections.gallery ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
-              }`}>
+              <div 
+                className={`h-[250px] md:h-[300px] lg:h-[350px] transition-all duration-1000 delay-800 animate-optimized ${
+                  animateSections.gallery ? 'translate-x-0' : '-translate-x-full'
+                }`}
+                style={{
+                  transform: animateSections.gallery ? 'translateX(0)' : 'translateX(-100%)'
+                }}
+              >
                 <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
                   <img
                     src="/gallery/wallpaperflare.com_wallpaper (3).jpg"
@@ -294,9 +407,14 @@ export default function HomePage() {
                 </div>
               </div>
               
-              <div className={`h-[250px] md:h-[300px] lg:h-[350px] transition-all duration-700 delay-1000 animate-optimized ${
-                animateSections.gallery ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
-              }`}>
+              <div 
+                className={`h-[250px] md:h-[300px] lg:h-[350px] transition-all duration-1000 delay-1000 animate-optimized ${
+                  animateSections.gallery ? 'translate-x-0' : 'translate-x-full'
+                }`}
+                style={{
+                  transform: animateSections.gallery ? 'translateX(0)' : 'translateX(100%)'
+                }}
+              >
                 <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
                   <img
                     src="/gallery/wallpaperflare.com_wallpaper (4).jpg"

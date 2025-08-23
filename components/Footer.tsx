@@ -73,7 +73,7 @@ export default function Footer() {
         {/* Copyright and Powered by */}
         <div className="border-t border-white/20 mt-8 pt-8 text-center space-y-2">
           <p className="text-sm font-light opacity-80">
-            © 2024 Ruءya Eyewear. All rights reserved.
+            © 2025 Ruءya Eyewear. All rights reserved.
           </p>
           <p className="text-xs font-light opacity-60">
             Powered by NextGem

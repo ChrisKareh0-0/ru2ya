@@ -355,6 +355,7 @@ export default function HomePage() {
                       alt="Ru2ya Collection"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
+                      
                       width={400}
                       height={240}
                     />
@@ -399,7 +400,7 @@ export default function HomePage() {
                       src="/gallery/Ru2ya 2.JPG"
                       alt="Ru2ya Collection"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      style={{ objectPosition: 'center 50%' }}
+                      
                       loading="lazy"
                       width={600}
                       height={350}

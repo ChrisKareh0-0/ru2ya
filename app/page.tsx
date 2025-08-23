@@ -252,9 +252,14 @@ export default function HomePage() {
                     ? 'opacity-100 scale-100' 
                     : 'opacity-0 scale-75'
                 }`}
-                style={{ fontSize: '1.9em' }}
+                style={{ 
+                  fontSize: '1.9em',
+                  lineHeight: '1',
+                  verticalAlign: 'baseline',
+                  display: 'inline-block'
+                }}
               >
-                ء
+                <span className="block transform -translate-y-11 md:-translate-y-1">ء</span>
               </span>
               <span style={{height: '108px'}}
                 className={`inline-block transition-all duration-1000 delay-300 ease-out hero-title-animation ${

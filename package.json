@@ -9,7 +9,9 @@
     "lint": "next lint",
     "migrate": "node scripts/migrate-db.js",
     "recreate-db": "node scripts/recreate-db.js",
-    "update-images": "node scripts/update-images.js"
+    "update-images": "node scripts/update-images.js",
+    "backup-db": "node scripts/deploy-backup.js",
+    "restore-db": "node scripts/restore-db.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",

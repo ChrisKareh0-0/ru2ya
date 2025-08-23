@@ -32,6 +32,104 @@ export default function AdminDashboard() {
   const [imagePreview, setImagePreview] = useState<string>('');
   const [uploading, setUploading] = useState(false);
 
+  // Export and Import functions
+  const exportProducts = () => {
+    const exportData = products.map(product => ({
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      image: product.image,
+      category: product.category,
+      featured: product.featured,
+      bestseller: product.bestseller
+    }));
+
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `ru2ya-products-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    showMessage('Products exported successfully!');
+  };
+
+  const importProducts = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const importData = JSON.parse(text);
+      
+      if (!Array.isArray(importData)) {
+        throw new Error('Invalid file format. Expected an array of products.');
+      }
+
+      // Validate each product
+      for (const product of importData) {
+        if (!product.name || !product.price || !product.category) {
+          throw new Error('Invalid product data. Each product must have name, price, and category.');
+        }
+      }
+
+      // Import products one by one
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const productData of importData) {
+        try {
+          const response = await fetch('/api/admin/products', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              name: productData.name,
+              description: productData.description || '',
+              price: parseFloat(productData.price),
+              image: productData.image || '',
+              category: productData.category,
+              featured: productData.featured || false,
+              bestseller: productData.bestseller || false
+            }),
+          });
+
+          if (response.ok) {
+            successCount++;
+          } else {
+            errorCount++;
+          }
+        } catch (error) {
+          errorCount++;
+        }
+      }
+
+      // Refresh products list
+      await fetchProducts();
+      
+      if (errorCount === 0) {
+        showMessage(`Successfully imported ${successCount} products!`);
+      } else {
+        showMessage(`Imported ${successCount} products with ${errorCount} errors.`);
+      }
+
+      // Clear the file input
+      event.target.value = '';
+
+    } catch (error) {
+      console.error('Import error:', error);
+      showMessage(`Import failed: ${(error as Error).message}`);
+      event.target.value = '';
+    }
+  };
+
   useEffect(() => {
     console.log('🔄 Admin dashboard useEffect triggered');
     fetchProducts();
@@ -421,14 +519,47 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Add Product Button */}
-          <div className="mb-6">
+          {/* Product Management Buttons */}
+          <div className="mb-6 flex flex-wrap gap-4 items-center">
             <button
               onClick={() => setShowModal(true)}
               className="px-6 py-3 bg-[#7C805A] hover:bg-[#6A7150] text-[#F5E6D3] rounded-xl transition-all duration-200 font-light shadow-lg shadow-black/30"
             >
               Add New Product
             </button>
+            
+            <button
+              onClick={exportProducts}
+              className="px-6 py-3 bg-[#6A7150] hover:bg-[#5A6140] text-[#F5E6D3] rounded-xl transition-all duration-200 font-light shadow-lg shadow-black/30"
+            >
+              📤 Export Products
+            </button>
+            
+            <div className="relative">
+              <input
+                type="file"
+                accept=".json"
+                onChange={importProducts}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                id="import-products"
+              />
+              <label
+                htmlFor="import-products"
+                className="px-6 py-3 bg-[#7C805A] hover:bg-[#6A7150] text-[#F5E6D3] rounded-xl transition-all duration-200 font-light shadow-lg shadow-black/30 cursor-pointer inline-block"
+              >
+                📥 Import Products
+              </label>
+            </div>
+          </div>
+
+          {/* Export/Import Info */}
+          <div className="mb-6 p-4 bg-[#F5E6D3]/20 border border-[#7C805A]/20 rounded-xl">
+            <h3 className="text-lg font-light text-[#7C805A] mb-2 font-elegant">📋 Product Management</h3>
+            <div className="text-sm text-[#7C805A]/80 space-y-1">
+              <p><strong>Export:</strong> Downloads all products as a JSON file with images, descriptions, titles, and prices</p>
+              <p><strong>Import:</strong> Upload a JSON file to add multiple products at once</p>
+              <p><strong>Format:</strong> JSON file should contain an array of products with name, price, category, description, image, featured, and bestseller fields</p>
+            </div>
           </div>
 
           {/* Products Grid */}

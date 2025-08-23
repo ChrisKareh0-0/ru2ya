@@ -16,8 +16,8 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
   const hasValidImage = product.image && product.image.trim() !== '' && !imageError;
 
   return (
-    <div className="group relative backdrop-blur-xl bg-white/20 border border-white/30 rounded-2xl p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 hover:bg-white/25 shadow-black/20 hover:shadow-black/30">
-      <div className="relative overflow-hidden rounded-xl mb-4 shadow-lg shadow-black/20">
+    <div className="group relative backdrop-blur-xl bg-white/20 border border-white/30 p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 hover:bg-white/25 shadow-black/20 hover:shadow-black/30">
+      <div className="relative overflow-hidden mb-4 shadow-lg shadow-black/20">
         {hasValidImage ? (
           <img
             src={product.image}
@@ -68,14 +68,14 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
           <span className="text-2xl font-light bg-gradient-to-r from-[#7C805A] to-[#6A7150] bg-clip-text text-transparent drop-shadow-sm">
             ${product.price}
           </span>
-          <span className="text-sm text-[#7C805A] bg-white/20 px-2 py-1 rounded-full font-light shadow-md shadow-black/20">
+          <span className="text-sm text-[#7C805A] bg-white/20 px-2 py-1 font-light shadow-md shadow-black/20">
             {product.category}
           </span>
         </div>
         
         <button
           onClick={() => onAddToCart(product)}
-          className="w-full py-3 px-4 bg-gradient-to-r from-[#7C805A] to-[#6A7150] hover:from-[#6A7150] hover:to-[#5A6140] text-white font-light rounded-xl transition-all duration-200 transform hover:shadow-xl shadow-lg shadow-black/30 hover:shadow-black/40"
+          className="w-full py-3 px-4 bg-gradient-to-r from-[#7C805A] to-[#6A7150] hover:from-[#6A7150] hover:to-[#5A6140] text-white font-light transition-all duration-200 transform hover:shadow-xl shadow-lg shadow-black/30 hover:shadow-black/40"
         >
           Add to Cart
         </button>

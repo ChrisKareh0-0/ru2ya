@@ -232,12 +232,12 @@ export default function HomePage() {
       
       <main className="pt-20">
         {/* Hero Section */}
-        <section className={`relative py-20 px-4 overflow-hidden transition-all duration-1000 ${
+        <section className={`relative py-32 md:py-40 px-4 overflow-hidden transition-all duration-1000 ${
           animateLogo ? 'opacity-100' : 'opacity-0'
         }`}>
           <div className="container mx-auto text-center relative z-10">
-            <h1 className="text-6xl md:text-8xl font-light mb-8 font-elegant drop-shadow-2xl">
-              <span 
+            <h1 className="text-6xl md:text-8xl font-light mb-12 font-elegant drop-shadow-2xl">
+              <span style={{height: '108px'}}
                 className={`inline-block transition-all duration-1000 ease-out hero-title-animation ${
                   animateLogo 
                     ? 'translate-x-0 opacity-100' 
@@ -256,7 +256,7 @@ export default function HomePage() {
               >
                 ء
               </span>
-              <span 
+              <span style={{height: '108px'}}
                 className={`inline-block transition-all duration-1000 delay-300 ease-out hero-title-animation ${
                   animateLogo 
                     ? 'translate-x-0 opacity-100' 
@@ -266,11 +266,10 @@ export default function HomePage() {
                 ya
               </span>
             </h1>
-            <p className={`text-2xl md:text-3xl text-[#7C805A] max-w-4xl mx-auto font-light drop-shadow-lg mb-12 transition-all duration-1000 delay-1000 ${
+            <p className={`text-2xl md:text-3xl text-[#7C805A] max-w-4xl mx-auto font-light drop-shadow-lg mb-16 transition-all duration-1000 delay-1000 ${
               animateLogo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
               A Dream. A Vision. A Way Of Seeing The World.
-
             </p>
             <button
               onClick={() => router.push('/products')}
@@ -329,8 +328,8 @@ export default function HomePage() {
               >
                 <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
                   <img
-                    src="/gallery/wallpaperflare.com_wallpaper.jpg"
-                    alt="Gallery Collection"
+                    src="/gallery/Ru2ya 1.JPG"
+                    alt="Ru2ya Collection"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                     width={800}
@@ -352,8 +351,8 @@ export default function HomePage() {
                 >
                   <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
                     <img
-                      src="/gallery/wallpaperflare.com_wallpaper (1).jpg"
-                      alt="Gallery Collection"
+                      src="/gallery/Ru2ya 4.JPG"
+                      alt="Ru2ya Collection"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
                       width={400}
@@ -373,8 +372,8 @@ export default function HomePage() {
                 >
                   <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
                     <img
-                      src="/gallery/wallpaperflare.com_wallpaper (2).jpg"
-                      alt="Gallery Collection"
+                      src="/gallery/Ru2ya 3.JPG"
+                      alt="Ru2ya Collection"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
                       width={400}
@@ -396,14 +395,15 @@ export default function HomePage() {
                 }}
               >
                 <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
-                  <img
-                    src="/gallery/wallpaperflare.com_wallpaper (3).jpg"
-                    alt="Gallery Collection"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                    width={600}
-                    height={350}
-                  />
+                                      <img
+                      src="/gallery/Ru2ya 2.JPG"
+                      alt="Ru2ya Collection"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      style={{ objectPosition: 'center 50%' }}
+                      loading="lazy"
+                      width={600}
+                      height={350}
+                    />
                 </div>
               </div>
               
@@ -416,14 +416,14 @@ export default function HomePage() {
                 }}
               >
                 <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
-                  <img
-                    src="/gallery/wallpaperflare.com_wallpaper (4).jpg"
-                    alt="Gallery Collection"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                    width={600}
-                    height={350}
-                  />
+                                      <img
+                      src="/gallery/Ru2ya 5.JPG"
+                      alt="Ru2ya Collection"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                      width={600}
+                      height={350}
+                    />
                 </div>
               </div>
             </div>

@@ -26,7 +26,7 @@ export default function Footer() {
           <div className="footer-col text-center">
             <h2 className="text-4xl font-light font-elegant mb-2">
               <span className="text-[#F5E6D3]">ru</span>
-              <span style={{fontSize: '60px'}} className="text-[#F5E6D3]">ء‎</span>
+              <span style={{fontSize: '44px', margin: '0 -2px', transform: 'translateY(-8px)'}} className="align-middle inline-block text-[#F5E6D3]">ء‎</span>
               <span className="text-[#F5E6D3]">ya</span>
             </h2>
             <p className="text-sm font-light opacity-80">Eyewear</p>

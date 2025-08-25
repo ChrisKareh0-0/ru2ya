@@ -18,6 +18,7 @@ interface CountdownData {
 
 export default function Header({ cartItems, onCartToggle }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [countdownData, setCountdownData] = useState<CountdownData>({
     title: 'Limited Time Offer',
     targetDate: '2024-12-31',
@@ -102,6 +103,24 @@ export default function Header({ cartItems, onCartToggle }: HeaderProps) {
               <a href="/products" className="text-[#7C805A] hover:text-[#6A7150] transition-colors font-light hover:drop-shadow-md">
                 Products
               </a>
+              <div className="relative">
+                <button
+                  onClick={() => setIsCategoriesOpen(v => !v)}
+                  className="text-[#7C805A] hover:text-[#6A7150] transition-colors font-light hover:drop-shadow-md flex items-center gap-1"
+                >
+                  Categories
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {isCategoriesOpen && (
+                  <div className="absolute mt-2 w-40 bg-white rounded-lg shadow-xl border border-white/30 backdrop-blur-xl z-20">
+                    <a href="/products?category=kids" className="block px-4 py-2 text-[#7C805A] hover:bg-white/40">Kids</a>
+                    <a href="/products?category=women" className="block px-4 py-2 text-[#7C805A] hover:bg-white/40">Women</a>
+                    <a href="/products?category=men" className="block px-4 py-2 text-[#7C805A] hover:bg-white/40">Men</a>
+                  </div>
+                )}
+              </div>
             </nav>
           </div>
 
@@ -210,6 +229,12 @@ export default function Header({ cartItems, onCartToggle }: HeaderProps) {
               >
                 Products
               </a>
+              <div className="pt-2">
+                <div className="px-3 py-2 text-xs uppercase tracking-wide text-[#7C805A]/70">Categories</div>
+                <a href="/products?category=kids" className="block text-[#7C805A] hover:text-[#6A7150] transition-colors py-2 font-light px-3 rounded-lg hover:bg-white/10" onClick={() => setIsMenuOpen(false)}>Kids</a>
+                <a href="/products?category=women" className="block text-[#7C805A] hover:text-[#6A7150] transition-colors py-2 font-light px-3 rounded-lg hover:bg-white/10" onClick={() => setIsMenuOpen(false)}>Women</a>
+                <a href="/products?category=men" className="block text-[#7C805A] hover:text-[#6A7150] transition-colors py-2 font-light px-3 rounded-lg hover:bg-white/10" onClick={() => setIsMenuOpen(false)}>Men</a>
+              </div>
             </div>
           </nav>
         )}

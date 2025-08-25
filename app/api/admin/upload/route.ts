@@ -60,14 +60,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get public URL
-    const { data: urlData } = supabase.storage
+    // Prefer a long-lived signed URL to avoid bucket visibility issues
+    const { data: signedData, error: signedError } = await supabase.storage
       .from('product-images')
-      .getPublicUrl(fileName);
+      .createSignedUrl(fileName, 60 * 60 * 24 * 365 * 10); // 10 years
+
+    if (signedError || !signedData?.signedUrl) {
+      // Fallback to public URL if signed URL not available
+      const { data: urlData } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(fileName);
+
+      return NextResponse.json({
+        success: true,
+        url: urlData.publicUrl,
+        message: 'Image uploaded successfully'
+      });
+    }
 
     return NextResponse.json({
       success: true,
-      url: urlData.publicUrl,
+      url: signedData.signedUrl,
       message: 'Image uploaded successfully'
     });
 

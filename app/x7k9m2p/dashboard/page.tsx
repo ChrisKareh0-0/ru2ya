@@ -276,6 +276,7 @@ export default function AdminDashboard() {
       bestseller: product.bestseller
     });
     setImagePreview(product.image);
+    setShowModal(true);
   };
 
   const resetForm = () => {
@@ -329,7 +330,10 @@ export default function AdminDashboard() {
       
       if (response.ok) {
         const data = await response.json();
-        setFormData(prev => ({ ...prev, image: data.url }));
+        setFormData(prev => ({ 
+          ...prev, 
+          image: prev.image && prev.image.trim().length > 0 ? `${prev.image}, ${data.url}` : data.url 
+        }));
         setImagePreview(data.url);
         setImageFile(null);
       } else {
@@ -522,7 +526,11 @@ export default function AdminDashboard() {
           {/* Product Management Buttons */}
           <div className="mb-6 flex flex-wrap gap-4 items-center">
             <button
-              onClick={() => setShowModal(true)}
+              onClick={() => {
+                setEditingProduct(null);
+                resetForm();
+                setShowModal(true);
+              }}
               className="px-6 py-3 bg-[#7C805A] hover:bg-[#6A7150] text-[#F5E6D3] rounded-xl transition-all duration-200 font-light shadow-lg shadow-black/30"
             >
               Add New Product
@@ -655,24 +663,29 @@ export default function AdminDashboard() {
                   <div className="mb-4">
                     <label className="block text-[#7C805A] font-light mb-2">Image</label>
                     <div className="space-y-3">
-                      {/* Image Preview */}
-                      {imagePreview && (
-                        <div className="relative">
-                          <img
-                            src={imagePreview}
-                            alt="Product preview"
-                            className="w-32 h-32 object-cover rounded-lg border border-white/40"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setImagePreview('');
-                              setFormData(prev => ({ ...prev, image: '' }));
-                            }}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
-                          >
-                            ×
-                          </button>
+                      {/* Image Previews (multiple) */}
+                      {formData.image && formData.image.split(',').map((url, idx) => url.trim()).filter(Boolean).length > 0 && (
+                        <div className="flex flex-wrap gap-3">
+                          {formData.image.split(',').map((raw, idx) => raw.trim()).filter(Boolean).map((url, idx) => (
+                            <div key={idx} className="relative">
+                              <img src={url} alt={`Product ${idx+1}`} className="w-20 h-20 object-cover rounded-lg border border-white/40" />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const remaining = formData.image
+                                    .split(',')
+                                    .map(s => s.trim())
+                                    .filter(Boolean)
+                                    .filter(u => u !== url);
+                                  setFormData(prev => ({ ...prev, image: remaining.join(', ') }));
+                                }}
+                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] hover:bg-red-600 transition-colors"
+                                aria-label="Remove image"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
                         </div>
                       )}
                       
@@ -696,12 +709,17 @@ export default function AdminDashboard() {
                         )}
                       </div>
                       
-                      {/* Current Image URL (for reference) */}
-                      {formData.image && (
-                        <div className="text-xs text-[#7C805A] opacity-70">
-                          Current: {formData.image}
-                        </div>
-                      )}
+                      {/* Current Image URLs (for reference/editing) */}
+                      <div>
+                        <label className="block text-[#7C805A] font-light mb-1 text-xs">Image URLs (comma-separated)</label>
+                        <textarea
+                          value={formData.image}
+                          onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
+                          className="w-full px-3 py-2 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent text-xs"
+                          rows={2}
+                          placeholder="https://.../a.jpg, https://.../b.jpg"
+                        />
+                      </div>
                     </div>
                   </div>
                   

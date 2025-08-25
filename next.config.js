@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  swcMinify: false,
+  swcMinify: true,
+  images: {
+    domains: ['fcmkzwcemtlnudsmtkdt.supabase.co'],
+  },
   experimental: {
     serverComponentsExternalPackages: [],
   },

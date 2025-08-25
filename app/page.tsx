@@ -232,11 +232,11 @@ export default function HomePage() {
       
       <main className="pt-20">
         {/* Hero Section */}
-        <section className={`relative py-32 md:py-40 px-4 overflow-hidden transition-all duration-1000 ${
+        <section className={`relative py-40 md:py-56 px-4 overflow-visible transition-all duration-1000 ${
           animateLogo ? 'opacity-100' : 'opacity-0'
         }`}>
           <div className="container mx-auto text-center relative z-10">
-            <h1 className="text-6xl md:text-8xl font-light mb-12 font-elegant drop-shadow-2xl">
+            <h1 className="text-6xl md:text-8xl font-light mb-12 font-elegant drop-shadow-2xl leading-[1.3] overflow-visible">
               <span style={{height: '108px'}}
                 className={`inline-block transition-all duration-1000 ease-out hero-title-animation ${
                   animateLogo 
@@ -247,19 +247,20 @@ export default function HomePage() {
                 ru
               </span>
               <span 
-                className={`inline-block mx-4 transition-all duration-1000 delay-700 ease-out hero-title-animation ${
+                className={`inline-block mx-0 md:mx-0 transition-all duration-1000 delay-700 ease-out hero-title-animation ${
                   animateLogo 
                     ? 'opacity-100 scale-100' 
                     : 'opacity-0 scale-75'
                 }`}
                 style={{ 
-                  fontSize: '1.9em',
+                  fontSize: '1.0em',
                   lineHeight: '1',
                   verticalAlign: 'baseline',
-                  display: 'inline-block'
+                  display: 'inline-block',
+                  margin: '0 -4px'
                 }}
               >
-                <span className="block transform -translate-y-11 md:-translate-y-1">ء</span>
+                <span className="block transform -translate-y-12 md:-translate-y-11">ء</span>
               </span>
               <span style={{height: '108px'}}
                 className={`inline-block transition-all duration-1000 delay-300 ease-out hero-title-animation ${

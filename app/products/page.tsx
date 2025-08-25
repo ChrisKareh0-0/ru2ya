@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Product } from '@/lib/products';
 import { CartManager, CartItem } from '@/lib/cart';
 import Header from '@/components/Header';
 import ProductCard from '@/components/ProductCard';
-import Cart from '@/components/Cart';
+import dynamic from 'next/dynamic';
+const Cart = dynamic(() => import('@/components/Cart'), { ssr: false });
 import { useRouter } from 'next/navigation';
 
 export default function ProductsPage() {
@@ -26,6 +27,17 @@ export default function ProductsPage() {
 
   useEffect(() => {
     fetchProducts();
+  }, []);
+
+  // Initialize selectedCategory from URL query param if present
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const categoryFromUrl = params.get('category');
+      if (categoryFromUrl) {
+        setSelectedCategory(categoryFromUrl.toLowerCase());
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -139,6 +151,12 @@ export default function ProductsPage() {
     console.log('✅ Final filtered products:', filtered.length, 'products');
     setFilteredProducts(filtered);
   };
+
+  // Simple debounce for searchTerm changes
+  useEffect(() => {
+    const id = setTimeout(() => filterAndSortProducts(), 200);
+    return () => clearTimeout(id);
+  }, [searchTerm]);
 
   const handleAddToCart = (product: Product) => {
     cartManager.addItem(product);

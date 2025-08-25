@@ -1,16 +1,33 @@
 'use client';
 
 import { Product } from '@/lib/products';
-import { useState } from 'react';
+import { memo, useMemo, useState } from 'react';
+import Image from 'next/image';
 
 interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
 }
 
-export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
+function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const imageUrls = useMemo(() => (product.image || '')
+    .split(',')
+    .map(url => url.trim())
+    .filter(url => url.length > 0), [product.image]);
+  const hasMultipleImages = imageUrls.length > 1;
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const goPrev = () => {
+    if (imageUrls.length === 0) return;
+    setCurrentIndex((prev) => (prev - 1 + imageUrls.length) % imageUrls.length);
+  };
+
+  const goNext = () => {
+    if (imageUrls.length === 0) return;
+    setCurrentIndex((prev) => (prev + 1) % imageUrls.length);
+  };
 
   // Check if product has a valid image
   const hasValidImage = product.image && product.image.trim() !== '' && !imageError;
@@ -19,15 +36,52 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
     <div className="group relative backdrop-blur-xl bg-white/20 border border-white/30 p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 hover:bg-white/25 shadow-black/20 hover:shadow-black/30">
       <div className="relative overflow-hidden mb-4 shadow-lg shadow-black/20">
         {hasValidImage ? (
-          <img
-            src={product.image}
-            alt={product.name}
-            className={`w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110 ${
-              imageLoaded ? 'opacity-100' : 'opacity-0'
-            }`}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageError(true)}
-          />
+          <>
+            <div className={`relative w-full h-64 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+              <Image
+                src={imageUrls[currentIndex] || imageUrls[0] || '/images/placeholder.png'}
+                alt={product.name}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                onLoadingComplete={() => setImageLoaded(true)}
+                onError={() => setImageError(true)}
+                priority={false}
+              />
+            </div>
+            {hasMultipleImages && (
+              <>
+                <button
+                  type="button"
+                  onClick={goPrev}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#7C805A] rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-10"
+                  aria-label="Previous image"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={goNext}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#7C805A] rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-10"
+                  aria-label="Next image"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
+                  {imageUrls.map((_, idx) => (
+                    <span
+                      key={idx}
+                      className={`w-2 h-2 rounded-full ${idx === currentIndex ? 'bg-[#7C805A]' : 'bg-white/80'}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </>
         ) : (
           <div className="w-full h-64 bg-gradient-to-br from-[#7C805A]/20 to-[#6A7150]/20 flex items-center justify-center">
             <div className="text-center text-[#7C805A] opacity-60">
@@ -83,3 +137,6 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
     </div>
   );
 }
+
+const ProductCard = memo(ProductCardComponent);
+export default ProductCard;

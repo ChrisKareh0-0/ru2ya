@@ -8,8 +8,9 @@ export interface DatabaseConfig {
 
 export function getDatabaseConfig(): DatabaseConfig {
   const isProduction = process.env.NODE_ENV === 'production';
+  const isBuildTime = !!process.env.NEXT_PHASE || process.env.BUILD_ID !== undefined;
   
-  if (isProduction) {
+  if (isProduction && !isBuildTime) {
     // In production, use a persistent path that won't be overwritten
     const persistentPath = process.env.DATABASE_PATH || '/data/ru2ya.db';
     
@@ -32,7 +33,7 @@ export function getDatabaseConfig(): DatabaseConfig {
     };
   }
   
-  // In development, use local path
+  // In development or during build, use local path
   return getLocalDatabaseConfig();
 }
 

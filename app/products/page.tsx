@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Product } from '@/lib/products';
 import { CartManager, CartItem } from '@/lib/cart';
 import Header from '@/components/Header';
 import ProductCard from '@/components/ProductCard';
-import dynamic from 'next/dynamic';
-const Cart = dynamic(() => import('@/components/Cart'), { ssr: false });
+import dynamicImport from 'next/dynamic';
+const Cart = dynamicImport(() => import('@/components/Cart'), { ssr: false });
+
+export const dynamic = 'force-dynamic' as const;
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -223,6 +225,7 @@ export default function ProductsPage() {
         onCartToggle={() => setIsCartOpen(!isCartOpen)} 
       />
       
+      <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center text-[#7C805A]">Loading...</div>}>
       <main className="relative pt-20">
         {/* Hero Section */}
         <section className="py-16 px-4">
@@ -370,6 +373,7 @@ export default function ProductsPage() {
           </div>
         </section>
       </main>
+      </Suspense>
 
       <Cart
         isOpen={isCartOpen}

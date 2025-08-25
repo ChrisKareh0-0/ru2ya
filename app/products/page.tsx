@@ -11,12 +11,21 @@ const Cart = dynamicImport(() => import('@/components/Cart'), { ssr: false });
 
 export const dynamic = 'force-dynamic' as const;
 
-export default function ProductsPage() {
+function ProductsContent({
+  cartManager,
+  cartItems,
+  setCartItems,
+  isCartOpen,
+  setIsCartOpen
+}: {
+  cartManager: CartManager;
+  cartItems: CartItem[];
+  setCartItems: React.Dispatch<React.SetStateAction<CartItem[]>>;
+  isCartOpen: boolean;
+  setIsCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [cartManager] = useState(() => new CartManager());
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -219,13 +228,6 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header 
-        cartItems={cartItems} 
-        onCartToggle={() => setIsCartOpen(!isCartOpen)} 
-      />
-      
-      <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center text-[#7C805A]">Loading...</div>}>
       <main className="relative pt-20">
         {/* Hero Section */}
         <section className="py-16 px-4">
@@ -373,15 +375,45 @@ export default function ProductsPage() {
           </div>
         </section>
       </main>
-      </Suspense>
+  );
+}
 
+export default function ProductsPage() {
+  const [cartManager] = useState(() => new CartManager());
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-white">
+      <Header 
+        cartItems={cartItems} 
+        onCartToggle={() => setIsCartOpen(!isCartOpen)} 
+      />
+      <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center text-[#7C805A]">Loading...</div>}>
+        <ProductsContent
+          cartManager={cartManager}
+          cartItems={cartItems}
+          setCartItems={setCartItems}
+          isCartOpen={isCartOpen}
+          setIsCartOpen={setIsCartOpen}
+        />
+      </Suspense>
       <Cart
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         items={cartItems}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemoveItem={handleRemoveItem}
-        onClearCart={handleClearCart}
+        onUpdateQuantity={(productId: number, quantity: number) => {
+          cartManager.updateQuantity(productId, quantity);
+          setCartItems(cartManager.getItems());
+        }}
+        onRemoveItem={(productId: number) => {
+          cartManager.removeItem(productId);
+          setCartItems(cartManager.getItems());
+        }}
+        onClearCart={() => {
+          cartManager.clear();
+          setCartItems([]);
+        }}
       />
     </div>
   );

@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Product } from '@/lib/products';
 import { CartManager, CartItem } from '@/lib/cart';
 import Header from '@/components/Header';
 import ProductCard from '@/components/ProductCard';
 import dynamic from 'next/dynamic';
 const Cart = dynamic(() => import('@/components/Cart'), { ssr: false });
-import { useRouter } from 'next/navigation';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -24,21 +24,42 @@ export default function ProductsPage() {
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
   const [showBestsellersOnly, setShowBestsellersOnly] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  // Initialize selectedCategory from URL query param if present
+  // Initialize and sync category from URL param
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const categoryFromUrl = params.get('category');
-      if (categoryFromUrl) {
-        setSelectedCategory(categoryFromUrl.toLowerCase());
+    const categoryFromUrl = searchParams.get('category');
+    if (categoryFromUrl) {
+      const normalized = categoryFromUrl.toLowerCase();
+      if (normalized !== selectedCategory) {
+        setSelectedCategory(normalized);
       }
+    } else if (selectedCategory !== 'all') {
+      // If param removed, reset to 'all'
+      setSelectedCategory('all');
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  // Update URL when category changes via UI (replace to avoid history spam)
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const current = (params.get('category') || 'all').toLowerCase();
+    if (selectedCategory !== current) {
+      if (selectedCategory === 'all') {
+        params.delete('category');
+      } else {
+        params.set('category', selectedCategory);
+      }
+      const query = params.toString();
+      router.replace(`/products${query ? `?${query}` : ''}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, searchParams]);
 
   useEffect(() => {
     filterAndSortProducts();

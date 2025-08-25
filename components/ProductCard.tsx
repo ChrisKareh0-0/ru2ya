@@ -1,7 +1,7 @@
 'use client';
 
 import { Product } from '@/lib/products';
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 
 interface ProductCardProps {
@@ -18,6 +18,12 @@ function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
     .filter(url => url.length > 0), [product.image]);
   const hasMultipleImages = imageUrls.length > 1;
   const [currentIndex, setCurrentIndex] = useState(0);
+  // Ensure single image shows immediately
+  useEffect(() => {
+    if (imageUrls.length === 1) {
+      setImageLoaded(true);
+    }
+  }, [imageUrls.length]);
 
   const goPrev = () => {
     if (imageUrls.length === 0) return;

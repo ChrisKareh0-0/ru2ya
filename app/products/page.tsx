@@ -78,7 +78,9 @@ export default function ProductsPage() {
     let filtered = products.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            product.description.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+      const productCategory = (product.category || '').toLowerCase().trim();
+      const selected = (selectedCategory || '').toLowerCase().trim();
+      const matchesCategory = selected === 'all' || productCategory === selected;
       let matchesPrice = true;
       if (priceRange) {
         switch (priceRange) {
@@ -238,8 +240,9 @@ export default function ProductsPage() {
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
                         >
                           <option value="all">All Categories</option>
-                          <option value="Sunglasses">Sunglasses</option>
-                          <option value="Eyeglasses">Eyeglasses</option>
+                          <option value="women">Women</option>
+                          <option value="men">Men</option>
+                          <option value="kids">Kids</option>
                         </select>
                       </div>
 

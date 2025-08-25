@@ -402,7 +402,7 @@ export default function HomePage() {
               >
                 <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
                                       <img
-                      src="/gallery/Ru2ya 2.JPG"
+                      src="/gallery/Ru2ya 2.jpg"
                       alt="Ru2ya Collection"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       

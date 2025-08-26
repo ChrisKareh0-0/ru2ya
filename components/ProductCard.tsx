@@ -2,11 +2,85 @@
 
 import { Product } from '@/lib/products';
 import { memo, useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 
 interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
+}
+
+function Lightbox({
+  images,
+  index,
+  onClose,
+  onPrev,
+  onNext,
+}: {
+  images: string[];
+  index: number;
+  onClose: () => void;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') onPrev();
+      if (e.key === 'ArrowRight') onNext();
+    };
+    const original = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKey);
+    return () => {
+      window.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = original;
+    };
+  }, [onClose, onPrev, onNext]);
+
+  const currentSrc = images[index] || images[0];
+
+  return (
+    <div className="fixed inset-0 z-[9999] bg-black/90" onClick={onClose}>
+      <button
+        type="button"
+        aria-label="Close"
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        className="absolute top-4 right-4 w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center"
+      >
+        ✕
+      </button>
+
+      {images.length > 1 && (
+        <>
+          <button
+            type="button"
+            aria-label="Previous image"
+            onClick={(e) => { e.stopPropagation(); onPrev(); }}
+            className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white rounded-full w-12 h-12 flex items-center justify-center"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            aria-label="Next image"
+            onClick={(e) => { e.stopPropagation(); onNext(); }}
+            className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white rounded-full w-12 h-12 flex items-center justify-center"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </>
+      )}
+
+      <div className="absolute inset-0" onClick={(e) => e.stopPropagation()}>
+        <Image src={currentSrc || '/images/placeholder.png'} alt="Full image" fill className="object-contain" priority />
+      </div>
+    </div>
+  );
 }
 
 function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
@@ -18,6 +92,8 @@ function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
     .filter(url => url.length > 0), [product.image]);
   const hasMultipleImages = imageUrls.length > 1;
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   // Ensure single image shows immediately
   useEffect(() => {
     if (imageUrls.length === 1) {
@@ -35,12 +111,15 @@ function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
     setCurrentIndex((prev) => (prev + 1) % imageUrls.length);
   };
 
+  useEffect(() => { setMounted(true); }, []);
+
   // Check if product has a valid image
   const hasValidImage = product.image && product.image.trim() !== '' && !imageError;
 
   return (
+    <>
     <div className="group relative backdrop-blur-xl bg-white/20 border border-white/30 p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 hover:bg-white/25 shadow-black/20 hover:shadow-black/30">
-      <div className="relative overflow-hidden mb-4 shadow-lg shadow-black/20">
+      <div className="relative overflow-hidden mb-4 shadow-lg shadow-black/20 cursor-zoom-in" onClick={() => setIsLightboxOpen(true)}>
         {hasValidImage ? (
           <>
             <div className={`relative w-full h-64 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
@@ -141,6 +220,18 @@ function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
         </button>
       </div>
     </div>
+
+    {mounted && isLightboxOpen && hasValidImage && createPortal(
+      <Lightbox
+        images={imageUrls}
+        index={currentIndex}
+        onClose={() => setIsLightboxOpen(false)}
+        onPrev={goPrev}
+        onNext={goNext}
+      />,
+      document.body
+    )}
+    </>
   );
 }
 

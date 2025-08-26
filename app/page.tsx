@@ -232,7 +232,7 @@ export default function HomePage() {
       
       <main className="pt-20">
         {/* Hero Section */}
-        <section className={`relative py-40 md:py-56 px-4 overflow-visible transition-all duration-1000 ${
+        <section className={`relative py-56 md:py-56 px-4 min-h-[75vh] md:min-h-[60vh] overflow-visible transition-all duration-1000 ${
           animateLogo ? 'opacity-100' : 'opacity-0'
         }`}>
           <div className="container mx-auto text-center relative z-10">
@@ -247,7 +247,7 @@ export default function HomePage() {
                 ru
               </span>
               <span 
-                className={`inline-block mx-0 md:mx-0 transition-all duration-1000 delay-700 ease-out hero-title-animation ${
+                className={`inline-block mx-0 md:mx-0 h-[2.0em] md:h-[1.5em] transition-all duration-1000 delay-700 ease-out hero-title-animation ${
                   animateLogo 
                     ? 'opacity-100 scale-100' 
                     : 'opacity-0 scale-75'
@@ -260,7 +260,7 @@ export default function HomePage() {
                   margin: '0 -4px'
                 }}
               >
-                <span className="block transform -translate-y-12 md:-translate-y-11">ء</span>
+                <span className="block transform -translate-y-[2.0rem] md:-translate-y-[0.2rem] text-7xl md:text-6xl leading-none">ء</span>
               </span>
               <span style={{height: '108px'}}
                 className={`inline-block transition-all duration-1000 delay-300 ease-out hero-title-animation ${

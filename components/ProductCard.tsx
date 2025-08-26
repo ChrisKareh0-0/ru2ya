@@ -118,11 +118,11 @@ function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
 
   return (
     <>
-    <div className="group relative backdrop-blur-xl bg-white/20 border border-white/30 p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 hover:bg-white/25 shadow-black/20 hover:shadow-black/30">
-      <div className="relative overflow-hidden mb-4 shadow-lg shadow-black/20 cursor-zoom-in" onClick={() => setIsLightboxOpen(true)}>
+    <div className="group relative backdrop-blur-xl bg-white/20 border border-white/30 p-3 xs:p-4 sm:p-6 shadow-lg sm:shadow-2xl hover:shadow-xl sm:hover:shadow-3xl transition-all duration-300 hover:scale-105 hover:bg-white/25 shadow-black/20 hover:shadow-black/30 rounded-lg sm:rounded-xl">
+      <div className="relative overflow-hidden mb-3 sm:mb-4 shadow-md sm:shadow-lg shadow-black/20 cursor-zoom-in rounded-lg" onClick={() => setIsLightboxOpen(true)}>
         {hasValidImage ? (
           <>
-            <div className={`relative w-full h-64 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+            <div className={`relative w-full h-48 xs:h-56 sm:h-64 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
               <Image
                 src={imageUrls[currentIndex] || imageUrls[0] || '/images/placeholder.png'}
                 alt={product.name}
@@ -168,53 +168,53 @@ function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
             )}
           </>
         ) : (
-          <div className="w-full h-64 bg-gradient-to-br from-[#7C805A]/20 to-[#6A7150]/20 flex items-center justify-center">
+          <div className="w-full h-48 xs:h-56 sm:h-64 bg-gradient-to-br from-[#7C805A]/20 to-[#6A7150]/20 flex items-center justify-center rounded-lg">
             <div className="text-center text-[#7C805A] opacity-60">
-              <svg className="w-16 h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-12 xs:w-14 sm:w-16 h-12 xs:h-14 sm:h-16 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
               </svg>
-              <p className="text-sm font-light">No Image</p>
+              <p className="text-xs sm:text-sm font-light">No Image</p>
             </div>
           </div>
         )}
         
         {/* Badges */}
-        <div className="absolute top-3 left-3 flex gap-2">
+        <div className="absolute top-2 sm:top-3 left-2 sm:left-3 flex gap-1 sm:gap-2">
           {product.featured && (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-[#7C805A] to-[#6A7150] text-white shadow-lg">
+            <span className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-[#7C805A] to-[#6A7150] text-white shadow-sm sm:shadow-lg">
               Featured
             </span>
           )}
           {product.bestseller && (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-[#7C805A] to-[#6A7150] text-white shadow-lg">
+            <span className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-[#7C805A] to-[#6A7150] text-white shadow-sm sm:shadow-lg">
               Bestseller
             </span>
           )}
         </div>
       </div>
       
-      <div className="space-y-3">
+      <div className="space-y-2 sm:space-y-3">
         <div>
-          <h3 className="text-xl font-light text-[#7C805A] mb-1 group-hover:text-[#6A7150] transition-colors drop-shadow-sm">
+          <h3 className="text-lg xs:text-xl font-light text-[#7C805A] mb-1 group-hover:text-[#6A7150] transition-colors drop-shadow-sm line-clamp-2">
             {product.name}
           </h3>
-          <p className="text-[#7C805A] text-sm line-clamp-2 font-light drop-shadow-sm">
+          <p className="text-[#7C805A] text-xs sm:text-sm line-clamp-2 font-light drop-shadow-sm">
             {product.description}
           </p>
         </div>
         
         <div className="flex items-center justify-between">
-          <span className="text-2xl font-light bg-gradient-to-r from-[#7C805A] to-[#6A7150] bg-clip-text text-transparent drop-shadow-sm">
+          <span className="text-xl xs:text-2xl font-light bg-gradient-to-r from-[#7C805A] to-[#6A7150] bg-clip-text text-transparent drop-shadow-sm">
             ${product.price}
           </span>
-          <span className="text-sm text-[#7C805A] bg-white/20 px-2 py-1 font-light shadow-md shadow-black/20">
+          <span className="text-xs sm:text-sm text-[#7C805A] bg-white/20 px-1.5 sm:px-2 py-0.5 sm:py-1 font-light shadow-sm sm:shadow-md shadow-black/20 rounded">
             {product.category}
           </span>
         </div>
         
         <button
           onClick={() => onAddToCart(product)}
-          className="w-full py-3 px-4 bg-gradient-to-r from-[#7C805A] to-[#6A7150] hover:from-[#6A7150] hover:to-[#5A6140] text-white font-light transition-all duration-200 transform hover:shadow-xl shadow-lg shadow-black/30 hover:shadow-black/40"
+          className="w-full py-2.5 xs:py-3 px-3 xs:px-4 bg-gradient-to-r from-[#7C805A] to-[#6A7150] hover:from-[#6A7150] hover:to-[#5A6140] text-white text-sm xs:text-base font-light transition-all duration-200 transform hover:shadow-lg sm:hover:shadow-xl shadow-md sm:shadow-lg shadow-black/30 hover:shadow-black/40 rounded-lg"
         >
           Add to Cart
         </button>

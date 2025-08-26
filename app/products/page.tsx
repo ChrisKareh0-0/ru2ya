@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Product } from '@/lib/products';
 import { CartManager, CartItem } from '@/lib/cart';
@@ -34,64 +34,35 @@ function ProductsContent({
   const [showFilters, setShowFilters] = useState(false);
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
   const [showBestsellersOnly, setShowBestsellersOnly] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  // Initialize and sync category from URL param
+  // Initialize category from URL param and listen for changes
   useEffect(() => {
     const categoryFromUrl = searchParams.get('category');
-    if (categoryFromUrl) {
-      const normalized = categoryFromUrl.toLowerCase();
-      if (normalized !== selectedCategory) {
-        setSelectedCategory(normalized);
-      }
-    } else if (selectedCategory !== 'all') {
-      // If param removed, reset to 'all'
-      setSelectedCategory('all');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const normalized = categoryFromUrl ? categoryFromUrl.toLowerCase() : 'all';
+    setSelectedCategory(normalized);
   }, [searchParams]);
 
-  // Update URL when category changes via UI (replace to avoid history spam)
-  useEffect(() => {
+  // Handle category change from filter dropdown
+  const handleCategoryFilterChange = useCallback((newCategory: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    const current = (params.get('category') || 'all').toLowerCase();
-    if (selectedCategory !== current) {
-      if (selectedCategory === 'all') {
-        params.delete('category');
-      } else {
-        params.set('category', selectedCategory);
-      }
-      const query = params.toString();
-      router.replace(`/products${query ? `?${query}` : ''}`);
+    
+    if (newCategory === 'all') {
+      params.delete('category');
+    } else {
+      params.set('category', newCategory);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory, searchParams]);
+    
+    const query = params.toString();
+    router.push(`/products${query ? `?${query}` : ''}`);
+  }, [searchParams, router]);
 
-  useEffect(() => {
-    filterAndSortProducts();
-  }, [products, searchTerm, selectedCategory, priceRange, sortBy, showFeaturedOnly, showBestsellersOnly]);
-
-  // Close filters when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      if (showFilters && !target.closest('.filter-container')) {
-        setShowFilters(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showFilters]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       console.log('🔍 Fetching products from /api/products...');
       const response = await fetch('/api/products', { 
@@ -109,9 +80,9 @@ function ProductsContent({
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const filterAndSortProducts = () => {
+  const filterAndSortProducts = useCallback(() => {
     console.log('🔧 Filtering products...');
     console.log('🔍 Search term:', searchTerm);
     console.log('🏷️ Selected category:', selectedCategory);
@@ -182,13 +153,27 @@ function ProductsContent({
 
     console.log('✅ Final filtered products:', filtered.length, 'products');
     setFilteredProducts(filtered);
-  };
+  }, [products, searchTerm, selectedCategory, priceRange, sortBy, showFeaturedOnly, showBestsellersOnly]);
 
-  // Simple debounce for searchTerm changes
   useEffect(() => {
-    const id = setTimeout(() => filterAndSortProducts(), 200);
-    return () => clearTimeout(id);
-  }, [searchTerm]);
+    filterAndSortProducts();
+  }, [filterAndSortProducts]);
+
+  // Close filters when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (showFilters && !target.closest('.filter-container')) {
+        setShowFilters(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showFilters]);
+
 
   const handleAddToCart = (product: Product) => {
     cartManager.addItem(product);
@@ -228,33 +213,33 @@ function ProductsContent({
   }
 
   return (
-      <main className="relative pt-20">
+      <main className="relative pt-16 xs:pt-18 sm:pt-20">
         {/* Hero Section */}
-        <section className="py-16 px-4">
+        <section className="py-12 xs:py-14 sm:py-16 px-4">
           <div className="container mx-auto text-center">
-            <h1 className="text-5xl md:text-7xl font-light mb-6 font-elegant drop-shadow-2xl drop-shadow-[#7C805A]/20">
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl font-light mb-4 sm:mb-6 font-elegant drop-shadow-2xl drop-shadow-[#7C805A]/20">
               <span className="text-[#7C805A]">All Products</span>
             </h1>
-            <p className="text-xl text-[#7C805A] max-w-3xl mx-auto font-light drop-shadow-lg mb-8">
+            <p className="text-base xs:text-lg sm:text-xl text-[#7C805A] max-w-3xl mx-auto font-light drop-shadow-lg mb-6 sm:mb-8 px-2">
               Explore our complete collection of premium products
             </p>
           </div>
         </section>
 
         {/* Search and Filter Section */}
-        <section className="px-4 mb-12">
+        <section className="px-4 mb-8 sm:mb-12">
           <div className="container mx-auto">
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-center mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center mb-6 sm:mb-8">
               {/* Search Bar */}
-              <div className="relative w-full max-w-md">
+              <div className="relative w-full max-w-sm sm:max-w-md">
                 <input
                   type="text"
                   placeholder="Search products..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-4 py-3 pl-12 rounded-lg bg-white/80 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent shadow-lg"
+                  className="w-full px-3 xs:px-4 py-2.5 xs:py-3 pl-10 xs:pl-12 text-sm xs:text-base rounded-lg bg-white/80 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent shadow-md sm:shadow-lg"
                 />
-                <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#7C805A]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="absolute left-3 xs:left-4 top-1/2 transform -translate-y-1/2 w-4 xs:w-5 h-4 xs:h-5 text-[#7C805A]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
@@ -263,9 +248,9 @@ function ProductsContent({
               <div className="relative">
                 <button
                   onClick={toggleFilters}
-                  className="px-6 py-3 bg-[#7C805A] text-white rounded-lg hover:bg-[#6A7150] transition-all duration-200 shadow-lg flex items-center gap-2"
+                  className="px-4 xs:px-6 py-2.5 xs:py-3 text-sm xs:text-base bg-[#7C805A] text-white rounded-lg hover:bg-[#6A7150] transition-all duration-200 shadow-md sm:shadow-lg flex items-center gap-1.5 xs:gap-2"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 xs:w-5 h-4 xs:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                   </svg>
                   Filters
@@ -273,15 +258,15 @@ function ProductsContent({
 
                 {/* Filter Popup */}
                 {showFilters && (
-                  <div className="filter-container absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-10">
-                    <div className="space-y-4">
+                  <div className="filter-container absolute top-full left-0 sm:right-0 mt-2 w-72 xs:w-80 sm:w-64 bg-white rounded-lg shadow-xl border border-gray-200 p-3 xs:p-4 z-10">
+                    <div className="space-y-3 xs:space-y-4">
                       {/* Category Filter */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                        <label className="block text-xs xs:text-sm font-medium text-gray-700 mb-1 xs:mb-2">Category</label>
                         <select
                           value={selectedCategory}
-                          onChange={(e) => setSelectedCategory(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                          onChange={(e) => handleCategoryFilterChange(e.target.value)}
+                          className="w-full px-2.5 xs:px-3 py-1.5 xs:py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
                         >
                           <option value="all">All Categories</option>
                           <option value="women">Women</option>
@@ -292,11 +277,11 @@ function ProductsContent({
 
                       {/* Price Range Filter */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+                        <label className="block text-xs xs:text-sm font-medium text-gray-700 mb-1 xs:mb-2">Price Range</label>
                         <select
                           value={priceRange}
                           onChange={(e) => setPriceRange(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                          className="w-full px-2.5 xs:px-3 py-1.5 xs:py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
                         >
                           <option value="">All Prices</option>
                           <option value="0-50">$0 - $50</option>
@@ -308,11 +293,11 @@ function ProductsContent({
 
                       {/* Sort By */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+                        <label className="block text-xs xs:text-sm font-medium text-gray-700 mb-1 xs:mb-2">Sort By</label>
                         <select
                           value={sortBy}
                           onChange={(e) => setSortBy(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                          className="w-full px-2.5 xs:px-3 py-1.5 xs:py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
                         >
                           <option value="newest">Newest First</option>
                           <option value="oldest">Oldest First</option>
@@ -323,15 +308,15 @@ function ProductsContent({
                       </div>
 
                       {/* Special Filters */}
-                      <div className="space-y-2">
+                      <div className="space-y-1.5 xs:space-y-2">
                         <label className="flex items-center">
                           <input
                             type="checkbox"
                             checked={showFeaturedOnly}
                             onChange={(e) => setShowFeaturedOnly(e.target.checked)}
-                            className="mr-2 h-4 w-4 text-[#7C805A] focus:ring-[#7C805A] border-gray-300 rounded"
+                            className="mr-2 h-3.5 xs:h-4 w-3.5 xs:w-4 text-[#7C805A] focus:ring-[#7C805A] border-gray-300 rounded"
                           />
-                          <span className="text-sm text-gray-700">Featured Only</span>
+                          <span className="text-xs xs:text-sm text-gray-700">Featured Only</span>
                         </label>
                         
                         <label className="flex items-center">
@@ -339,9 +324,9 @@ function ProductsContent({
                             type="checkbox"
                             checked={showBestsellersOnly}
                             onChange={(e) => setShowBestsellersOnly(e.target.checked)}
-                            className="mr-2 h-4 w-4 text-[#7C805A] focus:ring-[#7C805A] border-gray-300 rounded"
+                            className="mr-2 h-3.5 xs:h-4 w-3.5 xs:w-4 text-[#7C805A] focus:ring-[#7C805A] border-gray-300 rounded"
                           />
-                          <span className="text-sm text-gray-700">Bestsellers Only</span>
+                          <span className="text-xs xs:text-sm text-gray-700">Bestsellers Only</span>
                         </label>
                       </div>
                     </div>
@@ -353,16 +338,16 @@ function ProductsContent({
         </section>
 
         {/* Products Grid */}
-        <section className="px-4 pb-20">
+        <section className="px-4 pb-16 sm:pb-20">
           <div className="container mx-auto">
             {filteredProducts.length === 0 ? (
-              <div className="text-center py-20">
-                <div className="text-6xl mb-4">🔍</div>
-                <h3 className="text-2xl font-light text-[#7C805A] mb-2 drop-shadow-lg">No products found</h3>
-                <p className="text-[#7C805A] font-light drop-shadow-md">Try adjusting your search or filter criteria</p>
+              <div className="text-center py-16 xs:py-20">
+                <div className="text-4xl xs:text-5xl sm:text-6xl mb-3 xs:mb-4">🔍</div>
+                <h3 className="text-xl xs:text-2xl font-light text-[#7C805A] mb-2 drop-shadow-lg">No products found</h3>
+                <p className="text-sm xs:text-base text-[#7C805A] font-light drop-shadow-md px-4">Try adjusting your search or filter criteria</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 xs:gap-6 sm:gap-8">
                 {filteredProducts.map((product) => (
                   <ProductCard
                     key={product.id}

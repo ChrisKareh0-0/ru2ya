@@ -82,13 +82,13 @@ export default function Header({ cartItems, onCartToggle }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/20 border-b border-white/20 shadow-2xl shadow-black/10">
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-3 xs:px-4 py-3 xs:py-4 md:py-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-8">
             <button
               onClick={handleLogoClick}
-              className="text-[120px] font-light bg-gradient-to-r from-[#7C805A] to-[#6A7150] bg-clip-text text-transparent font-elegant drop-shadow-lg leading-none flex items-center cursor-pointer hover:scale-105 transition-transform duration-200"
-              style={{height: '94px', marginTop: '-25px'}}
+              className="text-[70px] xs:text-[85px] sm:text-[100px] font-light bg-gradient-to-r from-[#7C805A] to-[#6A7150] bg-clip-text text-transparent font-elegant drop-shadow-lg leading-none flex items-center cursor-pointer hover:scale-105 transition-transform duration-200 md:-translate-y-2"
+              style={{height: '60px', marginTop: '-12px', overflow: 'visible'}} 
             >
               ء‎
             </button>
@@ -115,9 +115,33 @@ export default function Header({ cartItems, onCartToggle }: HeaderProps) {
                 </button>
                 {isCategoriesOpen && (
                   <div className="absolute mt-2 w-40 bg-white rounded-lg shadow-xl border border-white/30 backdrop-blur-xl z-20">
-                    <a href="/products?category=kids" className="block px-4 py-2 text-[#7C805A] hover:bg-white/40">Kids</a>
-                    <a href="/products?category=women" className="block px-4 py-2 text-[#7C805A] hover:bg-white/40">Women</a>
-                    <a href="/products?category=men" className="block px-4 py-2 text-[#7C805A] hover:bg-white/40">Men</a>
+                    <button 
+                      onClick={() => {
+                        router.push('/products?category=kids');
+                        setIsCategoriesOpen(false);
+                      }} 
+                      className="block w-full text-left px-4 py-2 text-[#7C805A] hover:bg-white/40"
+                    >
+                      Kids
+                    </button>
+                    <button 
+                      onClick={() => {
+                        router.push('/products?category=women');
+                        setIsCategoriesOpen(false);
+                      }} 
+                      className="block w-full text-left px-4 py-2 text-[#7C805A] hover:bg-white/40"
+                    >
+                      Women
+                    </button>
+                    <button 
+                      onClick={() => {
+                        router.push('/products?category=men');
+                        setIsCategoriesOpen(false);
+                      }} 
+                      className="block w-full text-left px-4 py-2 text-[#7C805A] hover:bg-white/40"
+                    >
+                      Men
+                    </button>
                   </div>
                 )}
               </div>
@@ -126,35 +150,35 @@ export default function Header({ cartItems, onCartToggle }: HeaderProps) {
 
           {/* Countdown Timer - Center of Navbar */}
           {countdownData.isVisible && (
-            <div className="flex flex-col items-center justify-center absolute left-1/2 transform -translate-x-1/2 md:left-1/2 md:-translate-x-1/2 left-[40%] -translate-x-[40%]">
+            <div className="flex flex-col items-center justify-center absolute left-[40%] transform -translate-x-1/2 md:left-1/2">
               <div className="text-center">
-                <h3 className="text-xs md:text-sm font-light text-[#7C805A] mb-1 md:mb-2 drop-shadow-sm">
+                <h3 className="text-xs font-light text-[#7C805A] mb-1 drop-shadow-sm">
                   {countdownData.title}
                 </h3>
-                <div className="flex items-center space-x-1 md:space-x-3">
+                <div className="flex items-center space-x-2">
                   <div className="text-center">
-                    <div className="text-sm md:text-lg font-bold text-[#7C805A] drop-shadow-md">
+                    <div className="text-sm font-bold text-[#7C805A] drop-shadow-md">
                       {timeLeft.days.toString().padStart(2, '0')}
                     </div>
                     <div className="text-xs text-[#7C805A]/70 font-light">Days</div>
                   </div>
-                  <div className="text-[#7C805A] font-bold text-sm md:text-base">:</div>
+                  <div className="text-[#7C805A] font-bold text-sm">:</div>
                   <div className="text-center">
-                    <div className="text-sm md:text-lg font-bold text-[#7C805A] drop-shadow-md">
+                    <div className="text-sm font-bold text-[#7C805A] drop-shadow-md">
                       {timeLeft.hours.toString().padStart(2, '0')}
                     </div>
                     <div className="text-xs text-[#7C805A]/70 font-light">Hours</div>
                   </div>
-                  <div className="text-[#7C805A] font-bold text-sm md:text-base">:</div>
+                  <div className="text-[#7C805A] font-bold text-sm">:</div>
                   <div className="text-center">
-                    <div className="text-sm md:text-lg font-bold text-[#7C805A] drop-shadow-md">
+                    <div className="text-sm font-bold text-[#7C805A] drop-shadow-md">
                       {timeLeft.minutes.toString().padStart(2, '0')}
                     </div>
                     <div className="text-xs text-[#7C805A]/70 font-light">Minutes</div>
                   </div>
-                  <div className="text-[#7C805A] font-bold text-sm md:text-base">:</div>
+                  <div className="text-[#7C805A] font-bold text-sm">:</div>
                   <div className="text-center">
-                    <div className="text-sm md:text-lg font-bold text-[#7C805A] drop-shadow-md">
+                    <div className="text-sm font-bold text-[#7C805A] drop-shadow-md">
                       {timeLeft.seconds.toString().padStart(2, '0')}
                     </div>
                     <div className="text-xs text-[#7C805A]/70 font-light">Seconds</div>
@@ -164,13 +188,13 @@ export default function Header({ cartItems, onCartToggle }: HeaderProps) {
             </div>
           )}
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 xs:space-x-3 sm:space-x-4">
             <button
               onClick={onCartToggle}
-              className="relative p-3 rounded-xl bg-white/20 border border-white/30 hover:bg-white/30 transition-all duration-200 group shadow-lg hover:shadow-xl shadow-black/20 hover:shadow-black/30"
+              className="relative p-2 xs:p-2.5 sm:p-3 rounded-lg xs:rounded-xl bg-white/20 border border-white/30 hover:bg-white/30 transition-all duration-200 group shadow-md sm:shadow-lg hover:shadow-lg sm:hover:shadow-xl shadow-black/20 hover:shadow-black/30"
             >
               <svg
-                className="w-6 h-6 text-[#7C805A] group-hover:text-[#6A7150] transition-colors drop-shadow-sm"
+                className="w-5 xs:w-6 h-5 xs:h-6 text-[#7C805A] group-hover:text-[#6A7150] transition-colors drop-shadow-sm"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -183,7 +207,7 @@ export default function Header({ cartItems, onCartToggle }: HeaderProps) {
                 />
               </svg>
               {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-gradient-to-r from-[#7C805A] to-[#6A7150] text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-medium animate-pulse shadow-lg shadow-black/30">
+                <span className="absolute -top-1 xs:-top-2 -right-1 xs:-right-2 bg-gradient-to-r from-[#7C805A] to-[#6A7150] text-white text-xs w-5 xs:w-6 h-5 xs:h-6 rounded-full flex items-center justify-center font-medium animate-pulse shadow-md xs:shadow-lg shadow-black/30">
                   {totalItems}
                 </span>
               )}
@@ -191,10 +215,10 @@ export default function Header({ cartItems, onCartToggle }: HeaderProps) {
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-3 rounded-xl bg-white/20 border border-white/30 hover:bg-white/30 transition-all duration-200 shadow-lg hover:shadow-xl shadow-black/20 hover:shadow-black/30"
+              className="md:hidden p-2 xs:p-2.5 sm:p-3 rounded-lg xs:rounded-xl bg-white/20 border border-white/30 hover:bg-white/30 transition-all duration-200 shadow-md sm:shadow-lg hover:shadow-lg sm:hover:shadow-xl shadow-black/20 hover:shadow-black/30"
             >
               <svg
-                className="w-6 h-6 text-[#7C805A] drop-shadow-sm"
+                className="w-5 xs:w-6 h-5 xs:h-6 text-[#7C805A] drop-shadow-sm"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -211,29 +235,53 @@ export default function Header({ cartItems, onCartToggle }: HeaderProps) {
         </div>
 
         {isMenuOpen && (
-          <nav className="md:hidden mt-4 pt-4 border-t border-white/20 bg-white/10 rounded-xl backdrop-blur-xl shadow-xl shadow-black/20">
-            <div className="space-y-3 p-4">
+          <nav className="md:hidden mt-3 xs:mt-4 pt-3 xs:pt-4 border-t border-white/20 bg-white/10 rounded-lg xs:rounded-xl backdrop-blur-xl shadow-lg xs:shadow-xl shadow-black/20">
+            <div className="space-y-2 xs:space-y-3 p-3 xs:p-4">
               <button
                 onClick={() => {
                   router.push('/');
                   setIsMenuOpen(false);
                 }}
-                className="block text-[#7C805A] hover:text-[#6A7150] transition-colors py-2 font-light hover:drop-shadow-md px-3 rounded-lg hover:bg-white/10 cursor-pointer w-full text-left"
+                className="block text-[#7C805A] hover:text-[#6A7150] transition-colors py-2 font-light hover:drop-shadow-md px-3 rounded-lg hover:bg-white/10 cursor-pointer w-full text-left text-sm xs:text-base"
               >
                 Home
               </button>
               <a
                 href="/products"
-                className="block text-[#7C805A] hover:text-[#6A7150] transition-colors py-2 font-light hover:drop-shadow-md px-3 rounded-lg hover:bg-white/10"
+                className="block text-[#7C805A] hover:text-[#6A7150] transition-colors py-2 font-light hover:drop-shadow-md px-3 rounded-lg hover:bg-white/10 text-sm xs:text-base"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Products
               </a>
               <div className="pt-2">
-                <div className="px-3 py-2 text-xs uppercase tracking-wide text-[#7C805A]/70">Categories</div>
-                <a href="/products?category=kids" className="block text-[#7C805A] hover:text-[#6A7150] transition-colors py-2 font-light px-3 rounded-lg hover:bg-white/10" onClick={() => setIsMenuOpen(false)}>Kids</a>
-                <a href="/products?category=women" className="block text-[#7C805A] hover:text-[#6A7150] transition-colors py-2 font-light px-3 rounded-lg hover:bg-white/10" onClick={() => setIsMenuOpen(false)}>Women</a>
-                <a href="/products?category=men" className="block text-[#7C805A] hover:text-[#6A7150] transition-colors py-2 font-light px-3 rounded-lg hover:bg-white/10" onClick={() => setIsMenuOpen(false)}>Men</a>
+                <div className="px-3 py-2 text-xs uppercase tracking-wide text-[#7C805A]/70 font-medium">Categories</div>
+                <button 
+                  onClick={() => {
+                    router.push('/products?category=kids');
+                    setIsMenuOpen(false);
+                  }} 
+                  className="block w-full text-left text-[#7C805A] hover:text-[#6A7150] transition-colors py-2 font-light px-3 rounded-lg hover:bg-white/10 text-sm xs:text-base"
+                >
+                  Kids
+                </button>
+                <button 
+                  onClick={() => {
+                    router.push('/products?category=women');
+                    setIsMenuOpen(false);
+                  }} 
+                  className="block w-full text-left text-[#7C805A] hover:text-[#6A7150] transition-colors py-2 font-light px-3 rounded-lg hover:bg-white/10 text-sm xs:text-base"
+                >
+                  Women
+                </button>
+                <button 
+                  onClick={() => {
+                    router.push('/products?category=men');
+                    setIsMenuOpen(false);
+                  }} 
+                  className="block w-full text-left text-[#7C805A] hover:text-[#6A7150] transition-colors py-2 font-light px-3 rounded-lg hover:bg-white/10 text-sm xs:text-base"
+                >
+                  Men
+                </button>
               </div>
             </div>
           </nav>

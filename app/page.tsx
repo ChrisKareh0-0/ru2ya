@@ -232,12 +232,12 @@ export default function HomePage() {
       
       <main className="pt-20">
         {/* Hero Section */}
-        <section className={`relative py-56 md:py-56 px-4 min-h-[75vh] md:min-h-[60vh] overflow-visible transition-all duration-1000 ${
+        <section className={`relative py-32 sm:py-40 md:py-56 px-4 min-h-[70vh] sm:min-h-[75vh] md:min-h-[60vh] overflow-visible transition-all duration-1000 ${
           animateLogo ? 'opacity-100' : 'opacity-0'
         }`}>
           <div className="container mx-auto text-center relative z-10">
-            <h1 className="text-6xl md:text-8xl font-light mb-12 font-elegant drop-shadow-2xl leading-[1.3] overflow-visible">
-              <span style={{height: '108px'}}
+            <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl font-light mb-8 sm:mb-12 font-elegant drop-shadow-2xl leading-[1.3] overflow-visible">
+              <span style={{height: 'auto'}}
                 className={`inline-block transition-all duration-1000 ease-out hero-title-animation ${
                   animateLogo 
                     ? 'translate-x-0 opacity-100' 
@@ -257,12 +257,12 @@ export default function HomePage() {
                   lineHeight: '1',
                   verticalAlign: 'baseline',
                   display: 'inline-block',
-                  margin: '0 -4px'
+                  margin: '0 -2px sm:0 -4px'
                 }}
               >
-                <span className="block transform -translate-y-[2.0rem] md:-translate-y-[0.2rem] text-7xl md:text-6xl leading-none">ء</span>
+                <span className="block transform -translate-y-[1.5rem] xs:-translate-y-[1.7rem] sm:-translate-y-[2.0rem] md:-translate-y-[0.2rem] text-5xl xs:text-6xl sm:text-7xl md:text-6xl leading-none">ء</span>
               </span>
-              <span style={{height: '108px'}}
+              <span style={{height: 'auto'}}
                 className={`inline-block transition-all duration-1000 delay-300 ease-out hero-title-animation ${
                   animateLogo 
                     ? 'translate-x-0 opacity-100' 
@@ -272,14 +272,14 @@ export default function HomePage() {
                 ya
               </span>
             </h1>
-            <p className={`text-2xl md:text-3xl text-[#7C805A] max-w-4xl mx-auto font-light drop-shadow-lg mb-16 transition-all duration-1000 delay-1000 ${
+            <p className={`text-lg xs:text-xl sm:text-2xl md:text-3xl text-[#7C805A] max-w-4xl mx-auto font-light drop-shadow-lg mb-10 sm:mb-16 px-2 transition-all duration-1000 delay-1000 ${
               animateLogo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
               A Dream. A Vision. A Way Of Seeing The World.
             </p>
             <button
               onClick={() => router.push('/products')}
-              className={`px-8 md:px-12 py-3 md:py-4 bg-gradient-to-r from-[#7C805A] to-[#6A7150] hover:from-[#6A7150] hover:to-[#5A6140] text-white text-lg md:text-xl font-light rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-xl shadow-black/30 hover:shadow-black/40 focus-visible:outline-2 focus-visible:outline-[#7C805A] focus-visible:outline-offset-2 ${
+              className={`px-6 xs:px-8 sm:px-10 md:px-12 py-2.5 xs:py-3 md:py-4 bg-gradient-to-r from-[#7C805A] to-[#6A7150] hover:from-[#6A7150] hover:to-[#5A6140] text-white text-base xs:text-lg md:text-xl font-light rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-xl shadow-black/30 hover:shadow-black/40 focus-visible:outline-2 focus-visible:outline-[#7C805A] focus-visible:outline-offset-2 ${
                 animateLogo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}
               style={{ transitionDelay: '1200ms' }}
@@ -293,46 +293,32 @@ export default function HomePage() {
         <section 
           ref={galleryRef} 
           data-section="gallery" 
-          className={`py-12 md:py-20 px-4 relative mt-20 md:mt-40 transition-all duration-1000 overflow-hidden ${
+          className={`py-8 sm:py-12 md:py-20 px-4 relative mt-16 sm:mt-20 md:mt-40 transition-all duration-1000 overflow-hidden ${
             animateSections.gallery ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
           }`}
         >
           <div className="container mx-auto">
-            <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-3xl md:text-5xl font-light text-[#7C805A] mb-4 md:mb-6 font-elegant drop-shadow-xl">
+            <div className="text-center mb-8 sm:mb-12 md:mb-16">
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-light text-[#7C805A] mb-3 sm:mb-4 md:mb-6 font-elegant drop-shadow-xl">
                 Our Collection
               </h2>
-              <p className="text-lg md:text-xl text-[#7C805A] font-light max-w-3xl mx-auto drop-shadow-lg px-4">
+              <p className="text-base sm:text-lg md:text-xl text-[#7C805A] font-light max-w-3xl mx-auto drop-shadow-lg px-4">
                 Experience the artistry and craftsmanship behind every piece
               </p>
-              {/* Temporary debug info */}
-              {/* <div className="mt-4 text-sm text-[#7C805A] space-y-2">
-                <div>Gallery Ref: {galleryRef.current ? '✅ Set' : '❌ Null'}</div>
-                <div>Animation State: {animateSections.gallery ? '✅ Active' : '❌ Inactive'}</div>
-                <button 
-                  onClick={() => {
-                    console.log('🔘 Manual trigger clicked');
-                    setAnimateSections(prev => ({ ...prev, gallery: !prev.gallery }));
-                  }}
-                  className="px-4 py-2 bg-[#7C805A] text-white rounded-lg"
-                >
-                  Manual Trigger
-                </button>
-              </div> */}
             </div>
             
             {/* Main Gallery Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6 mb-6 md:mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
               {/* Large Left Image */}
               <div 
-                className={`md:col-span-2 lg:col-span-8 h-[300px] md:h-[400px] lg:h-[500px] transition-all duration-1000 delay-200 animate-optimized ${
+                className={`sm:col-span-2 lg:col-span-8 h-[250px] xs:h-[280px] sm:h-[300px] md:h-[400px] lg:h-[500px] transition-all duration-1000 delay-200 animate-optimized ${
                   animateSections.gallery ? 'translate-x-0' : '-translate-x-full'
                 }`}
                 style={{
                   transform: animateSections.gallery ? 'translateX(0)' : 'translateX(-100%)'
                 }}
               >
-                <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
+                <div className="relative h-full rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-lg sm:shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-xl sm:hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
                   <img
                     src="/gallery/Ru2ya 1.JPG"
                     alt="Ru2ya Collection"
@@ -345,24 +331,23 @@ export default function HomePage() {
               </div>
               
               {/* Right Column - Two Stacked Images */}
-              <div className="md:col-span-2 lg:col-span-4 space-y-4 md:space-y-6">
+              <div className="sm:col-span-2 lg:col-span-4 space-y-3 sm:space-y-4 md:space-y-6">
                 {/* Top Right Image */}
                 <div 
-                  className={`h-[180px] md:h-[200px] lg:h-[240px] transition-all duration-1000 delay-400 animate-optimized ${
+                  className={`h-[150px] xs:h-[160px] sm:h-[140px] md:h-[200px] lg:h-[240px] transition-all duration-1000 delay-400 animate-optimized ${
                     animateSections.gallery ? 'translate-x-0' : 'translate-x-full'
                   }`}
                   style={{
                     transform: animateSections.gallery ? 'translateX(0)' : 'translateX(100%)'
                   }}
                 >
-                  <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
+                  <div className="relative h-full rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-lg sm:shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-xl sm:hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
                     <img
                       src="/gallery/kids gallery.png"
                       alt="Ru2ya Collection"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       style={{ objectPosition: 'center 60%' }}
                       loading="lazy"
-                      
                       width={400}
                       height={240}
                     />
@@ -371,14 +356,14 @@ export default function HomePage() {
                 
                 {/* Bottom Right Image */}
                 <div 
-                  className={`h-[180px] md:h-[200px] lg:h-[240px] transition-all duration-1000 delay-600 animate-optimized ${
+                  className={`h-[150px] xs:h-[160px] sm:h-[140px] md:h-[200px] lg:h-[240px] transition-all duration-1000 delay-600 animate-optimized ${
                     animateSections.gallery ? 'translate-x-0' : 'translate-x-full'
                   }`}
                   style={{
                     transform: animateSections.gallery ? 'translateX(0)' : 'translateX(100%)'
                   }}
                 >
-                  <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
+                  <div className="relative h-full rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-lg sm:shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-xl sm:hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
                     <img
                       src="/gallery/Ru2ya 3.JPG"
                       alt="Ru2ya Collection"
@@ -393,45 +378,45 @@ export default function HomePage() {
             </div>
             
             {/* Bottom Row - Two Medium Images */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
               <div 
-                className={`h-[250px] md:h-[300px] lg:h-[350px] transition-all duration-1000 delay-800 animate-optimized ${
+                className={`h-[200px] xs:h-[220px] sm:h-[250px] md:h-[300px] lg:h-[350px] transition-all duration-1000 delay-800 animate-optimized ${
                   animateSections.gallery ? 'translate-x-0' : '-translate-x-full'
                 }`}
                 style={{
                   transform: animateSections.gallery ? 'translateX(0)' : 'translateX(-100%)'
                 }}
               >
-                <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
-                                      <img
-                      src="/gallery/Ru2ya 2.jpg"
-                      alt="Ru2ya Collection"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      style={{ objectPosition: 'center 40%' }}
-                      loading="lazy"
-                      width={600}
-                      height={350}
-                    />
+                <div className="relative h-full rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-lg sm:shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-xl sm:hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
+                  <img
+                    src="/gallery/Ru2ya 2.jpg"
+                    alt="Ru2ya Collection"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    style={{ objectPosition: 'center 40%' }}
+                    loading="lazy"
+                    width={600}
+                    height={350}
+                  />
                 </div>
               </div>
               
               <div 
-                className={`h-[250px] md:h-[300px] lg:h-[350px] transition-all duration-1000 delay-1000 animate-optimized ${
+                className={`h-[200px] xs:h-[220px] sm:h-[250px] md:h-[300px] lg:h-[350px] transition-all duration-1000 delay-1000 animate-optimized ${
                   animateSections.gallery ? 'translate-x-0' : 'translate-x-full'
                 }`}
                 style={{
                   transform: animateSections.gallery ? 'translateX(0)' : 'translateX(100%)'
                 }}
               >
-                <div className="relative h-full rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
-                                      <img
-                      src="/gallery/Ru2ya 5.JPG"
-                      alt="Ru2ya Collection"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                      width={600}
-                      height={350}
-                    />
+                <div className="relative h-full rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-lg sm:shadow-xl md:shadow-2xl shadow-black/20 hover:shadow-xl sm:hover:shadow-2xl md:hover:shadow-3xl hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm group hover-lift">
+                  <img
+                    src="/gallery/Ru2ya 5.JPG"
+                    alt="Ru2ya Collection"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                    width={600}
+                    height={350}
+                  />
                 </div>
               </div>
             </div>
@@ -442,21 +427,21 @@ export default function HomePage() {
         <section 
           ref={bestsellersRef} 
           data-section="bestsellers" 
-          className={`py-12 md:py-20 px-4 transition-all duration-1000 ${
+          className={`py-8 sm:py-12 md:py-20 px-4 transition-all duration-1000 ${
             animateSections.bestsellers ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
           }`}
         >
           <div className="container mx-auto">
-            <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-3xl md:text-5xl font-light text-[#7C805A] mb-4 md:mb-6 font-elegant drop-shadow-xl">
+            <div className="text-center mb-8 sm:mb-12 md:mb-16">
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-light text-[#7C805A] mb-3 sm:mb-4 md:mb-6 font-elegant drop-shadow-xl">
                 Bestsellers
               </h2>
-              <p className="text-lg md:text-xl text-[#7C805A] font-light max-w-3xl mx-auto drop-shadow-lg px-4">
+              <p className="text-base sm:text-lg md:text-xl text-[#7C805A] font-light max-w-3xl mx-auto drop-shadow-lg px-4">
                 Our most loved pieces by customers worldwide
               </p>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
               {bestsellers.map((product, index) => (
                 <div
                   key={product.id}
@@ -481,21 +466,21 @@ export default function HomePage() {
         <section 
           ref={featuredRef} 
           data-section="featured" 
-          className={`py-12 md:py-20 px-4 bg-gradient-to-br from-white to-[#F5E6D3]/30 transition-all duration-1000 ${
+          className={`py-8 sm:py-12 md:py-20 px-4 bg-gradient-to-br from-white to-[#F5E6D3]/30 transition-all duration-1000 ${
             animateSections.featured ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
           }`}
         >
           <div className="container mx-auto">
-            <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-3xl md:text-5xl font-light text-[#7C805A] mb-4 md:mb-6 font-elegant drop-shadow-xl">
+            <div className="text-center mb-8 sm:mb-12 md:mb-16">
+              <h2 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-light text-[#7C805A] mb-3 sm:mb-4 md:mb-6 font-elegant drop-shadow-xl">
                 Featured Products
               </h2>
-              <p className="text-lg md:text-xl text-[#7C805A] font-light max-w-3xl mx-auto drop-shadow-lg px-4">
+              <p className="text-base sm:text-lg md:text-xl text-[#7C805A] font-light max-w-3xl mx-auto drop-shadow-lg px-4">
                 Handpicked selections that define our signature style
               </p>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
               {featuredProducts.map((product, index) => (
                 <div
                   key={product.id}

@@ -47,7 +47,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a 
-                href="https://wa.me/96176829297?text=Hello%20Ru%D8%A1ya%20Eyewear%2C%20I%20have%20a%20question." 
+                href="https://wa.me/9613774989?text=Hello%20Ru%D8%A1ya%20Eyewear%2C%20I%20have%20a%20question." 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="social-icon-link p-2.5 sm:p-3 bg-white/20 hover:bg-white/30 rounded-lg sm:rounded-xl transition-all duration-200 shadow-md sm:shadow-lg hover:shadow-lg sm:hover:shadow-xl"

@@ -138,7 +138,7 @@ function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
               <>
                 <button
                   type="button"
-                  onClick={goPrev}
+                  onClick={(e) => { e.stopPropagation(); goPrev(); }}
                   className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#7C805A] rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-10"
                   aria-label="Previous image"
                 >
@@ -148,7 +148,7 @@ function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
                 </button>
                 <button
                   type="button"
-                  onClick={goNext}
+                  onClick={(e) => { e.stopPropagation(); goNext(); }}
                   className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-[#7C805A] rounded-full w-10 h-10 flex items-center justify-center shadow-lg z-10"
                   aria-label="Next image"
                 >

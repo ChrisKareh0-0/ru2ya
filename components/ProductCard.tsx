@@ -41,12 +41,12 @@ function Lightbox({
   const currentSrc = images[index] || images[0];
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/90" onClick={onClose}>
+    <div className="fixed inset-0 z-[9999] bg-white/90" onClick={onClose}>
       <button
         type="button"
         aria-label="Close"
         onClick={(e) => { e.stopPropagation(); onClose(); }}
-        className="absolute top-4 right-4 w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center z-10 cursor-pointer"
+        className="absolute top-4 right-4 w-11 h-11 rounded-full bg-[#7C805A]/20 hover:bg-[#7C805A]/30 text-[#7C805A] flex items-center justify-center z-10 cursor-pointer"
       >
         ✕
       </button>
@@ -57,7 +57,7 @@ function Lightbox({
             type="button"
             aria-label="Previous image"
             onClick={(e) => { e.stopPropagation(); onPrev(); }}
-            className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white rounded-full w-12 h-12 flex items-center justify-center z-10 cursor-pointer"
+            className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 bg-[#7C805A]/20 hover:bg-[#7C805A]/30 text-[#7C805A] rounded-full w-12 h-12 flex items-center justify-center z-10 cursor-pointer"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -67,7 +67,7 @@ function Lightbox({
             type="button"
             aria-label="Next image"
             onClick={(e) => { e.stopPropagation(); onNext(); }}
-            className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white rounded-full w-12 h-12 flex items-center justify-center z-10 cursor-pointer"
+            className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 bg-[#7C805A]/20 hover:bg-[#7C805A]/30 text-[#7C805A] rounded-full w-12 h-12 flex items-center justify-center z-10 cursor-pointer"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -83,6 +83,70 @@ function Lightbox({
   );
 }
 
+function DescriptionModal({
+  product,
+  onClose,
+}: {
+  product: Product;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    const original = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKey);
+    return () => {
+      window.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = original;
+    };
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-[9999] bg-black/50" onClick={onClose}>
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <div 
+          className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="p-6 sm:p-8">
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex-1">
+                <h2 className="text-2xl sm:text-3xl font-light text-[#7C805A] mb-2">
+                  {product.name}
+                </h2>
+                <div className="flex items-center gap-3">
+                  <span className="text-xl sm:text-2xl font-light bg-gradient-to-r from-[#7C805A] to-[#6A7150] bg-clip-text text-transparent">
+                    ${product.price}
+                  </span>
+                  <span className="text-sm text-[#7C805A] bg-[#F5E6D3]/50 px-3 py-1 rounded-full">
+                    {product.category}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                className="ml-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center transition-colors"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="prose prose-gray max-w-none">
+              <p className="text-[#7C805A] leading-relaxed whitespace-pre-wrap">
+                {product.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -93,6 +157,7 @@ function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
   const hasMultipleImages = imageUrls.length > 1;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   // Ensure single image shows immediately
   useEffect(() => {
@@ -198,9 +263,20 @@ function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
           <h3 className="text-lg xs:text-xl font-light text-[#7C805A] mb-1 group-hover:text-[#6A7150] transition-colors drop-shadow-sm line-clamp-2">
             {product.name}
           </h3>
-          <p className="text-[#7C805A] text-xs sm:text-sm line-clamp-2 font-light drop-shadow-sm">
-            {product.description}
-          </p>
+          <div className="text-[#7C805A] text-xs sm:text-sm font-light drop-shadow-sm">
+            <p className="line-clamp-2 mb-1">
+              {product.description}
+            </p>
+            {product.description && product.description.length > 80 && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setIsDescriptionModalOpen(true); }}
+                className="text-[#7C805A] hover:text-[#6A7150] underline text-xs font-medium transition-colors"
+              >
+                Read More
+              </button>
+            )}
+          </div>
         </div>
         
         <div className="flex items-center justify-between">
@@ -228,6 +304,14 @@ function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
         onClose={() => setIsLightboxOpen(false)}
         onPrev={goPrev}
         onNext={goNext}
+      />,
+      document.body
+    )}
+
+    {mounted && isDescriptionModalOpen && createPortal(
+      <DescriptionModal
+        product={product}
+        onClose={() => setIsDescriptionModalOpen(false)}
       />,
       document.body
     )}

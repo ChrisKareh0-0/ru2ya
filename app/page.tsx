@@ -232,13 +232,13 @@ export default function HomePage() {
       
       <main className="pt-20">
         {/* Hero Section */}
-        <section className={`relative py-32 sm:py-40 md:py-56 px-4 min-h-[70vh] sm:min-h-[75vh] md:min-h-[60vh] overflow-visible transition-all duration-1000 ${
+        <section className={`relative py-32 sm:py-40 md:py-60 px-4 min-h-[70vh] sm:min-h-[75vh] md:min-h-[65vh] overflow-visible transition-all duration-1000 ${
           animateLogo ? 'opacity-100' : 'opacity-0'
         }`}>
           <div className="container mx-auto text-center relative z-10">
-            <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl font-light mb-8 sm:mb-12 font-elegant drop-shadow-2xl leading-[1.3] overflow-visible">
+            <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl font-light mb-8 sm:mb-12 font-elegant drop-shadow-2xl leading-[1.3] overflow-visible md:pb-6">
               <span style={{height: 'auto'}}
-                className={`inline-block transition-all duration-1000 ease-out hero-title-animation ${
+                className={`inline-block transition-all duration-1000 ease-out hero-title-animation md:-translate-y-5 md:pb-3 ${
                   animateLogo 
                     ? 'translate-x-0 opacity-100' 
                     : '-translate-x-full opacity-0'
@@ -263,7 +263,7 @@ export default function HomePage() {
                 <span className="block transform -translate-y-[1.5rem] xs:-translate-y-[1.7rem] sm:-translate-y-[2.0rem] md:-translate-y-[0.2rem] text-5xl xs:text-6xl sm:text-7xl md:text-6xl leading-none">ء</span>
               </span>
               <span style={{height: 'auto'}}
-                className={`inline-block transition-all duration-1000 delay-300 ease-out hero-title-animation ${
+                className={`inline-block transition-all duration-1000 delay-300 ease-out hero-title-animation md:-translate-y-5 md:pb-3 ${
                   animateLogo 
                     ? 'translate-x-0 opacity-100' 
                     : 'translate-x-full opacity-0'

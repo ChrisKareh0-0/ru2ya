@@ -260,7 +260,7 @@ export default function HomePage() {
                   margin: '0 -2px sm:0 -4px'
                 }}
               >
-                <span className="block transform -translate-y-[1.5rem] xs:-translate-y-[1.7rem] sm:-translate-y-[2.0rem] md:-translate-y-[0.2rem] text-5xl xs:text-6xl sm:text-7xl md:text-6xl leading-none">ء</span>
+                <span className="block transform -translate-y-[0.1rem] xs:-translate-y-[1.7rem] sm:-translate-y-[2.0rem] md:-translate-y-[0.2rem] text-5xl xs:text-6xl sm:text-7xl md:text-6xl leading-none">ء</span>
               </span>
               <span style={{height: 'auto'}}
                 className={`inline-block transition-all duration-1000 delay-300 ease-out hero-title-animation md:-translate-y-5 md:pb-3 ${

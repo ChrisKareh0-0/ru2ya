@@ -184,7 +184,7 @@ function ProductCardComponent({ product, onAddToCart }: ProductCardProps) {
   return (
     <>
     <div className="group relative backdrop-blur-xl bg-white/20 border border-white/30 p-3 xs:p-4 sm:p-6 shadow-lg sm:shadow-2xl hover:shadow-xl sm:hover:shadow-3xl transition-all duration-300 hover:scale-105 hover:bg-white/25 shadow-black/20 hover:shadow-black/30 rounded-lg sm:rounded-xl">
-      <div className="relative overflow-hidden mb-3 sm:mb-4 shadow-md sm:shadow-lg shadow-black/20 cursor-zoom-in rounded-lg" onClick={() => setIsLightboxOpen(true)}>
+      <div className="relative overflow-hidden mb-3 sm:mb-4 shadow-md sm:shadow-lg shadow-black/20 rounded-lg">
         {hasValidImage ? (
           <>
             <div className={`relative w-full h-48 xs:h-56 sm:h-64 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>

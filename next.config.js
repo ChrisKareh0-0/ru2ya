@@ -1,6 +1,5 @@
 // Memory optimization for low-resource hosting
 // Memory optimization for low-resource hosting
-// Memory optimization for low-resource hosting
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   swcMinify: true,
@@ -15,11 +14,6 @@ const nextConfig = {
   images: {
     // Reduce image optimization memory
     minimumCacheTTL: 60,
-    // Limit concurrent image processing
-    dangerouslyAllowSVG: true,
-    contentDispositionType: 'attachment',
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    
     // Allow Firebase Storage domains
     remotePatterns: [
       {
@@ -31,6 +25,12 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'storage.googleapis.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'fcmkzwcemtlnudsmtkdt.supabase.co',
         port: '',
         pathname: '/**',
       },
@@ -64,17 +64,6 @@ const nextConfig = {
         },
       };
     }
-    
-    // Reduce memory usage for large files
-    config.module.rules.push({
-      test: /\.(png|jpe?g|gif|svg)$/i,
-      type: 'asset',
-      parser: {
-        dataUrlCondition: {
-          maxSize: 8 * 1024, // 8KB
-        },
-      },
-    });
     
     return config;
   },

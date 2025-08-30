@@ -193,47 +193,55 @@ export function getDatabase() {
   return db;
 }
 
-// Product functions with on-demand prepared statements
+// Optimize product queries with prepared statements
+const getProductsStmt = getDatabase().prepare(`
+  SELECT id, name, description, price, image, category, featured, bestseller, createdAt, updatedAt 
+  FROM products 
+  ORDER BY createdAt DESC
+`);
+
+const getProductsByCategoryStmt = getDatabase().prepare(`
+  SELECT id, name, description, price, image, category, featured, bestseller, createdAt, updatedAt 
+  FROM products 
+  WHERE category = ? 
+  ORDER BY createdAt DESC
+`);
+
+const getProductByIdStmt = getDatabase().prepare(`
+  SELECT id, name, description, price, image, category, featured, bestseller, createdAt, updatedAt 
+  FROM products 
+  WHERE id = ?
+`);
+
+const addProductStmt = getDatabase().prepare(`
+  INSERT INTO products (name, description, price, image, category, featured, bestseller) 
+  VALUES (?, ?, ?, ?, ?, ?, ?)
+`);
+
+const updateProductStmt = getDatabase().prepare(`
+  UPDATE products 
+  SET name = ?, description = ?, price = ?, image = ?, category = ?, featured = ?, bestseller = ?, updatedAt = CURRENT_TIMESTAMP 
+  WHERE id = ?
+`);
+
+const deleteProductStmt = getDatabase().prepare('DELETE FROM products WHERE id = ?');
+
+// Product functions
 export function getProducts(): Product[] {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT id, name, description, price, image, category, featured, bestseller, createdAt, updatedAt 
-    FROM products 
-    ORDER BY createdAt DESC
-  `);
-  return stmt.all() as Product[];
+  return getProductsStmt.all() as Product[];
 }
 
 export function getProductsByCategory(category: string): Product[] {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT id, name, description, price, image, category, featured, bestseller, createdAt, updatedAt 
-    FROM products 
-    WHERE category = ? 
-    ORDER BY createdAt DESC
-  `);
-  return stmt.all(category) as Product[];
+  return getProductsByCategoryStmt.all(category) as Product[];
 }
 
 export function getProductById(id: number): Product | null {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT id, name, description, price, image, category, featured, bestseller, createdAt, updatedAt 
-    FROM products 
-    WHERE id = ?
-  `);
-  const result = stmt.get(id) as Product | undefined;
+  const result = getProductByIdStmt.get(id) as Product | undefined;
   return result || null;
 }
 
 export function addProduct(product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Product {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    INSERT INTO products (name, description, price, image, category, featured, bestseller) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `);
-  
-  const result = stmt.run(
+  const result = addProductStmt.run(
     product.name,
     product.description,
     product.price,
@@ -255,17 +263,10 @@ export function addProduct(product: Omit<Product, 'id' | 'createdAt' | 'updatedA
 }
 
 export function updateProduct(id: number, product: Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt'>>): boolean {
-  const db = getDatabase();
   const existingProduct = getProductById(id);
   if (!existingProduct) return false;
   
-  const stmt = db.prepare(`
-    UPDATE products 
-    SET name = ?, description = ?, price = ?, image = ?, category = ?, featured = ?, bestseller = ?, updatedAt = CURRENT_TIMESTAMP 
-    WHERE id = ?
-  `);
-  
-  const result = stmt.run(
+  const result = updateProductStmt.run(
     product.name ?? existingProduct.name,
     product.description ?? existingProduct.description,
     product.price ?? existingProduct.price,
@@ -283,9 +284,7 @@ export function updateProduct(id: number, product: Partial<Omit<Product, 'id' | 
 }
 
 export function deleteProduct(id: number): boolean {
-  const db = getDatabase();
-  const stmt = db.prepare('DELETE FROM products WHERE id = ?');
-  const result = stmt.run(id);
+  const result = deleteProductStmt.run(id);
   
   // Export to JSON after deleting product
   exportProductsToJSON();
@@ -358,3 +357,5 @@ process.on('SIGTERM', () => {
   }
   process.exit(0);
 });
+
+

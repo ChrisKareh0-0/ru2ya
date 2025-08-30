@@ -17,7 +17,10 @@
     "dev:low-memory": "NODE_OPTIONS=\"--max-old-space-size=256\" next dev",
     "prebuild": "node scripts/optimize-memory.js",
     "build:render": "npm run prebuild && npm run build",
-    "start:render": "npm run start"
+    "start:render": "npm run start",
+    "remove-demo": "node scripts/remove-demo-products.js",
+    "reset-products": "node scripts/reset-products.js",
+    "test-export": "node scripts/test-json-export.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",

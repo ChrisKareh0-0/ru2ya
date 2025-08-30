@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: ru2ya-website
+    env: node
+    plan: starter
+    buildCommand: npm run build:render
+    startCommand: npm run start:render
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=256
+      - key: NEXT_TELEMETRY_DISABLED
+        value: 1
+      - key: NEXT_IMAGE_OPTIMIZATION_MEMORY_LIMIT
+        value: 128
+      - key: NEXT_BUILD_MEMORY_LIMIT
+        value: 256
+      - key: NEXT_RUNTIME_MEMORY_LIMIT
+        value: 128
+      - key: SQLITE_CACHE_SIZE
+        value: 2000
+      - key: SQLITE_TEMP_STORE
+        value: memory
+      - key: SQLITE_MMAP_SIZE
+        value: 268435456
+    healthCheckPath: /
+    autoDeploy: true
+    branch: master
+    buildFilter:
+      paths:
+        - app/**
+        - components/**
+        - lib/**
+        - next.config.js
+        - package.json
+        - scripts/**
+        - public/**
+        - tailwind.config.js

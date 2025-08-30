@@ -1,17 +1,6 @@
-import { getDatabase } from './database';
+import { getDatabase, Product } from './database';
 
-export interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
-  featured: boolean;
-  bestseller: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+export type { Product };
 
 export function getProducts(): Product[] {
   const db = getDatabase();

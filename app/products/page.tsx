@@ -204,6 +204,24 @@ function ProductsContent({
     setShowFilters(!showFilters);
   };
 
+  // Memory-optimized sorting
+  const sortedProducts = useMemo(() => {
+    if (!filteredProducts.length) return [];
+    
+    const sorted = [...filteredProducts];
+    switch (sortBy) {
+      case 'price-low':
+        return sorted.sort((a, b) => a.price - b.price);
+      case 'price-high':
+        return sorted.sort((a, b) => b.price - a.price);
+      case 'name':
+        return sorted.sort((a, b) => a.name.localeCompare(b.name));
+      case 'newest':
+      default:
+        return sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+  }, [filteredProducts, sortBy]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">

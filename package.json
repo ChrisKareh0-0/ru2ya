@@ -4,14 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=256\" next build",
+    "start": "NODE_OPTIONS=\"--max-old-space-size=256\" next start",
     "lint": "next lint",
     "migrate": "node scripts/migrate-db.js",
     "recreate-db": "node scripts/recreate-db.js",
     "update-images": "node scripts/update-images.js",
     "backup-db": "node scripts/deploy-backup.js",
-    "restore-db": "node scripts/restore-db.js"
+    "restore-db": "node scripts/restore-db.js",
+    "build:low-memory": "NODE_OPTIONS=\"--max-old-space-size=256 --optimize-for-size\" next build",
+    "start:low-memory": "NODE_OPTIONS=\"--max-old-space-size=256\" next start",
+    "dev:low-memory": "NODE_OPTIONS=\"--max-old-space-size=256\" next dev",
+    "prebuild": "node scripts/optimize-memory.js",
+    "build:render": "npm run prebuild && npm run build",
+    "start:render": "npm run start"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",

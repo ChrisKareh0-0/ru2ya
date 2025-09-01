@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { CartItem } from '@/lib/cart';
 import { useRouter } from 'next/navigation';
+import { getFirstImageUrl } from '@/lib/utils';
 
 interface CartProps {
   isOpen: boolean;
@@ -110,7 +111,7 @@ export default function Cart({
                   >
                     <div className="flex gap-4">
                       <img
-                        src={item.product.image}
+                        src={getFirstImageUrl(item.product.image)}
                         alt={item.product.name}
                         className="w-16 h-16 object-cover rounded-lg shadow-md shadow-black/20"
                       />

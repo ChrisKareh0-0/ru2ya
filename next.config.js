@@ -17,7 +17,10 @@ const nextConfig = {
   images: {
     // Reduce image optimization memory
     minimumCacheTTL: 60,
+    deviceSizes: [360, 414, 640, 768, 1024],
+    imageSizes: [32, 48, 64, 96, 128, 256],
     // Allow Firebase Storage domains
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',

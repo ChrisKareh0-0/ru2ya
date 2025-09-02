@@ -36,10 +36,12 @@ function ProductsContent({
   const [showBestsellersOnly, setShowBestsellersOnly] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [page]);
 
   // Initialize category from URL param and listen for changes
   useEffect(() => {
@@ -65,22 +67,23 @@ function ProductsContent({
   const fetchProducts = useCallback(async () => {
     try {
       console.log('🔍 Fetching products from /api/products...');
-      const response = await fetch('/api/products', { 
+      const offset = (page - 1) * PAGE_SIZE;
+      const response = await fetch(`/api/products?limit=${PAGE_SIZE}&offset=${offset}&list=1` , { 
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache'
         }
       });
-      const allProducts = await response.json();
-      console.log('✅ Products fetched:', allProducts.length, 'products');
-      console.log('📦 Products:', allProducts);
-      setProducts(allProducts);
+      const pagedProducts = await response.json();
+      console.log('✅ Products fetched:', pagedProducts.length, 'products');
+      console.log('📦 Products:', pagedProducts);
+      setProducts(pagedProducts);
     } catch (error) {
       console.error('❌ Error fetching products:', error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page]);
 
   const filterAndSortProducts = useCallback(() => {
     console.log('🔧 Filtering products...');
@@ -365,15 +368,36 @@ function ProductsContent({
                 <p className="text-sm xs:text-base text-[#7C805A] font-light drop-shadow-md px-4">Try adjusting your search or filter criteria</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 xs:gap-6 sm:gap-8">
-                {filteredProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onAddToCart={handleAddToCart}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 xs:gap-6 sm:gap-8">
+                  {filteredProducts.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      onAddToCart={handleAddToCart}
+                    />
+                  ))}
+                </div>
+                <div className="mt-8 flex items-center justify-center gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="px-4 py-2 rounded-lg border border-[#7C805A]/40 text-[#7C805A] disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+                  <span className="text-[#7C805A]">Page {page}</span>
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => p + 1)}
+                    disabled={products.length < PAGE_SIZE}
+                    className="px-4 py-2 rounded-lg border border-[#7C805A]/40 text-[#7C805A] disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
+              </>
             )}
           </div>
         </section>

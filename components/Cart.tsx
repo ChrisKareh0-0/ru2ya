@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { CartItem } from '@/lib/cart';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { getFirstImageUrl } from '@/lib/utils';
 
 interface CartProps {
@@ -110,11 +111,17 @@ export default function Cart({
                     }}
                   >
                     <div className="flex gap-4">
-                      <img
-                        src={getFirstImageUrl(item.product.image)}
-                        alt={item.product.name}
-                        className="w-16 h-16 object-cover rounded-lg shadow-md shadow-black/20"
-                      />
+                      <div className="w-16 h-16 relative">
+                        <Image
+                          src={getFirstImageUrl(item.product.image) || '/images/placeholder.png'}
+                          alt={item.product.name}
+                          fill
+                          sizes="64px"
+                          quality={60}
+                          className="object-cover rounded-lg shadow-md shadow-black/20"
+                          priority={false}
+                        />
+                      </div>
                       <div className="flex-1">
                         <h3 className="text-white font-light mb-1 drop-shadow-sm">{item.product.name}</h3>
                         <p className="text-white text-sm mb-2 font-light drop-shadow-sm">${item.product.price}</p>

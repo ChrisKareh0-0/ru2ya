@@ -118,9 +118,21 @@ export function getDatabase() {
     
     // Enable WAL mode for better performance and lower memory usage
     db.pragma('journal_mode = WAL');
-    db.pragma('cache_size = -2000'); // 2MB cache instead of default
-    db.pragma('temp_store = memory');
-    db.pragma('mmap_size = 268435456'); // 256MB memory mapping
+
+    // Configure SQLite cache size (in pages). Negative = KiB. Default to 2MB.
+    const envCacheSize = process.env.SQLITE_CACHE_SIZE;
+    const cacheSize = envCacheSize ? Number(envCacheSize) : -2000;
+    db.pragma(`cache_size = ${Number.isFinite(cacheSize) ? cacheSize : -2000}`);
+
+    // Configure temp store (default to memory). Accepts 'memory' or 'file'.
+    const tempStore = (process.env.SQLITE_TEMP_STORE || 'memory').toLowerCase() === 'file' ? 'file' : 'memory';
+    db.pragma(`temp_store = ${tempStore}`);
+
+    // Configure mmap size. Default to 64MB to avoid OOM in low-RAM envs.
+    const envMmapSize = process.env.SQLITE_MMAP_SIZE;
+    const defaultMmapSize = 64 * 1024 * 1024; // 64MB
+    const mmapSize = envMmapSize ? Number(envMmapSize) : defaultMmapSize;
+    db.pragma(`mmap_size = ${Number.isFinite(mmapSize) ? mmapSize : defaultMmapSize}`);
     
     // Create tables if they don't exist
     db.exec(`

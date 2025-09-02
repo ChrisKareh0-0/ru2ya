@@ -9,7 +9,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: NODE_OPTIONS
-        value: --max-old-space-size=256
+        value: --max-old-space-size=256 --optimize-for-size
       - key: NEXT_TELEMETRY_DISABLED
         value: 1
       - key: NEXT_IMAGE_OPTIMIZATION_MEMORY_LIMIT
@@ -17,13 +17,13 @@ services:
       - key: NEXT_BUILD_MEMORY_LIMIT
         value: 256
       - key: NEXT_RUNTIME_MEMORY_LIMIT
-        value: 128
+        value: 96
       - key: SQLITE_CACHE_SIZE
-        value: 2000
+        value: -1500
       - key: SQLITE_TEMP_STORE
         value: memory
       - key: SQLITE_MMAP_SIZE
-        value: 268435456
+        value: 67108864
     healthCheckPath: /
     autoDeploy: true
     branch: master

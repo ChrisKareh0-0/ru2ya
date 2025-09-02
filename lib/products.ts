@@ -8,6 +8,12 @@ export function getProducts(): Product[] {
   return stmt.all() as Product[];
 }
 
+export function getProductsPaginated(limit: number, offset: number): Product[] {
+  const db = getDatabase();
+  const stmt = db.prepare('SELECT * FROM products ORDER BY createdAt DESC LIMIT ? OFFSET ?');
+  return stmt.all(limit, offset) as Product[];
+}
+
 export function getProductById(id: number): Product | null {
   const db = getDatabase();
   const stmt = db.prepare('SELECT * FROM products WHERE id = ?');

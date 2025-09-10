@@ -32,13 +32,17 @@ export async function POST(request: NextRequest) {
 
     const db = getDatabase();
     
-    // Insert order using the existing database schema
+    // Insert order using the schema from migration script (camelCase)
     const insertOrder = db.prepare(`
-      INSERT INTO orders (customerName, customerEmail, customerPhone, customerAddress, totalAmount, status)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO orders (id, customerName, customerEmail, customerPhone, customerAddress, totalAmount, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `);
 
+    // Generate a simple UUID-like ID
+    const orderId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+
     const result = insertOrder.run(
+      orderId,
       customerInfo.firstName + ' ' + customerInfo.lastName,
       customerInfo.email,
       customerInfo.phone,
@@ -53,7 +57,6 @@ export async function POST(request: NextRequest) {
       VALUES (?, ?, ?, ?, ?)
     `);
 
-    const orderId = result.lastInsertRowid;
     items.forEach((item: any) => {
       insertOrderItem.run(
         orderId,
@@ -91,7 +94,7 @@ export async function GET() {
   try {
     const db = getDatabase();
     
-    // Get all orders with their items using the existing database schema
+    // Get all orders with their items using the actual database schema
     const orders = db.prepare(`
       SELECT * FROM orders ORDER BY createdAt DESC
     `).all();

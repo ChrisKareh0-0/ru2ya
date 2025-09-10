@@ -113,93 +113,104 @@ export function exportProductsToJSON(): boolean {
 
 export function getDatabase() {
   if (!db) {
-    const config = getDatabaseConfig();
-    db = new Database(config.path);
-    
-    // Enable WAL mode for better performance and lower memory usage
-    db.pragma('journal_mode = WAL');
-
-    // Configure SQLite cache size (in pages). Negative = KiB. Default to 2MB.
-    const envCacheSize = process.env.SQLITE_CACHE_SIZE;
-    const cacheSize = envCacheSize ? Number(envCacheSize) : -2000;
-    db.pragma(`cache_size = ${Number.isFinite(cacheSize) ? cacheSize : -2000}`);
-
-    // Configure temp store (default to memory). Accepts 'memory' or 'file'.
-    const tempStore = (process.env.SQLITE_TEMP_STORE || 'memory').toLowerCase() === 'file' ? 'file' : 'memory';
-    db.pragma(`temp_store = ${tempStore}`);
-
-    // Configure mmap size. Default to 64MB to avoid OOM in low-RAM envs.
-    const envMmapSize = process.env.SQLITE_MMAP_SIZE;
-    const defaultMmapSize = 64 * 1024 * 1024; // 64MB
-    const mmapSize = envMmapSize ? Number(envMmapSize) : defaultMmapSize;
-    db.pragma(`mmap_size = ${Number.isFinite(mmapSize) ? mmapSize : defaultMmapSize}`);
-    
-    // Create tables if they don't exist
-    db.exec(`
-      CREATE TABLE IF NOT EXISTS products (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        description TEXT,
-        price REAL NOT NULL,
-        image TEXT,
-        category TEXT,
-        featured BOOLEAN DEFAULT 0,
-        bestseller BOOLEAN DEFAULT 0,
-        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
+    try {
+      const config = getDatabaseConfig();
+      console.log('🔧 Initializing database at:', config.path);
       
-      CREATE TABLE IF NOT EXISTS orders (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        customer_name TEXT NOT NULL,
-        customer_email TEXT NOT NULL,
-        customer_phone TEXT NOT NULL,
-        items TEXT NOT NULL,
-        total_amount REAL NOT NULL,
-        status TEXT DEFAULT 'pending',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
+      db = new Database(config.path);
       
-      CREATE TABLE IF NOT EXISTS countdown (
-        id INTEGER PRIMARY KEY,
-        end_date DATETIME NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-    
-    // Check if products table is empty and load from JSON
-    const productCount = db.prepare('SELECT COUNT(*) as count FROM products').get() as { count: number };
-    
-    if (productCount.count === 0) {
-      console.log('🔄 Products table is empty, loading from JSON file...');
-      const products = loadProductsFromJSON();
+      // Enable WAL mode for better performance and lower memory usage
+      db.pragma('journal_mode = WAL');
+
+      // Configure SQLite cache size (in pages). Negative = KiB. Default to 2MB.
+      const envCacheSize = process.env.SQLITE_CACHE_SIZE;
+      const cacheSize = envCacheSize ? Number(envCacheSize) : -2000;
+      db.pragma(`cache_size = ${Number.isFinite(cacheSize) ? cacheSize : -2000}`);
+
+      // Configure temp store (default to memory). Accepts 'memory' or 'file'.
+      const tempStore = (process.env.SQLITE_TEMP_STORE || 'memory').toLowerCase() === 'file' ? 'file' : 'memory';
+      db.pragma(`temp_store = ${tempStore}`);
+
+      // Configure mmap size. Default to 64MB to avoid OOM in low-RAM envs.
+      const envMmapSize = process.env.SQLITE_MMAP_SIZE;
+      const defaultMmapSize = 64 * 1024 * 1024; // 64MB
+      const mmapSize = envMmapSize ? Number(envMmapSize) : defaultMmapSize;
+      db.pragma(`mmap_size = ${Number.isFinite(mmapSize) ? mmapSize : defaultMmapSize}`);
       
-      if (products.length > 0) {
-        const insertProduct = db.prepare(`
-          INSERT INTO products (name, description, price, image, category, featured, bestseller) 
-          VALUES (?, ?, ?, ?, ?, ?, ?)
-        `);
+      console.log('📋 Creating database tables...');
+      
+      // Create tables if they don't exist
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS products (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          description TEXT,
+          price REAL NOT NULL,
+          image TEXT,
+          category TEXT,
+          featured BOOLEAN DEFAULT 0,
+          bestseller BOOLEAN DEFAULT 0,
+          createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
         
-        // Begin transaction for faster insertion
-        const transaction = db.transaction(() => {
-          for (const product of products) {
-            insertProduct.run(
-              product.name,
-              product.description,
-              product.price,
-              product.image,
-              product.category,
-              product.featured ? 1 : 0,
-              product.bestseller ? 1 : 0
-            );
-          }
-        });
+        CREATE TABLE IF NOT EXISTS orders (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          customer_name TEXT NOT NULL,
+          customer_email TEXT NOT NULL,
+          customer_phone TEXT NOT NULL,
+          items TEXT NOT NULL,
+          total_amount REAL NOT NULL,
+          status TEXT DEFAULT 'pending',
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
         
-        transaction();
-        console.log(`✅ Successfully loaded ${products.length} products from JSON file`);
+        CREATE TABLE IF NOT EXISTS countdown (
+          id INTEGER PRIMARY KEY,
+          end_date DATETIME NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      
+      console.log('✅ Database tables created successfully');
+      
+      // Check if products table is empty and load from JSON
+      const productCount = db.prepare('SELECT COUNT(*) as count FROM products').get() as { count: number };
+      
+      if (productCount.count === 0) {
+        console.log('🔄 Products table is empty, loading from JSON file...');
+        const products = loadProductsFromJSON();
+        
+        if (products.length > 0) {
+          const insertProduct = db.prepare(`
+            INSERT INTO products (name, description, price, image, category, featured, bestseller) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+          `);
+          
+          // Begin transaction for faster insertion
+          const transaction = db.transaction(() => {
+            for (const product of products) {
+              insertProduct.run(
+                product.name,
+                product.description,
+                product.price,
+                product.image,
+                product.category,
+                product.featured ? 1 : 0,
+                product.bestseller ? 1 : 0
+              );
+            }
+          });
+          
+          transaction();
+          console.log(`✅ Successfully loaded ${products.length} products from JSON file`);
+        }
+      } else {
+        console.log(`📦 Database already contains ${productCount.count} products`);
       }
-    } else {
-      console.log(`📦 Database already contains ${productCount.count} products`);
+    } catch (error) {
+      console.error('❌ Failed to initialize database:', error);
+      throw error;
     }
   }
   return db;

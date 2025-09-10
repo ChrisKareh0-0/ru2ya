@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/database';
-import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,40 +14,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const db = getDatabase();
-    const orderId = uuidv4();
+    // Validate customerInfo fields
+    if (!customerInfo.firstName || !customerInfo.email || !customerInfo.phone) {
+      return NextResponse.json(
+        { error: 'Missing customer information' },
+        { status: 400 }
+      );
+    }
 
+    console.log('Attempting to create order with data:', {
+      customerName: customerInfo.firstName + ' ' + customerInfo.lastName,
+      email: customerInfo.email,
+      phone: customerInfo.phone,
+      itemsCount: items.length,
+      totalAmount
+    });
+
+    const db = getDatabase();
+    
     // Insert order using the actual database schema
     const insertOrder = db.prepare(`
-      INSERT INTO orders (id, customerName, customerEmail, customerPhone, customerAddress, totalAmount, status)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO orders (customer_name, customer_email, customer_phone, items, total_amount, status)
+      VALUES (?, ?, ?, ?, ?, ?)
     `);
 
-    insertOrder.run(
-      orderId,
+    const result = insertOrder.run(
       customerInfo.firstName + ' ' + customerInfo.lastName,
       customerInfo.email,
       customerInfo.phone,
-      customerInfo.address || '',
+      JSON.stringify(items),
       totalAmount,
       'pending'
     );
 
-    // Insert order items
-    const insertOrderItem = db.prepare(`
-      INSERT INTO order_items (orderId, productId, productName, quantity, price)
-      VALUES (?, ?, ?, ?, ?)
-    `);
-
-    items.forEach((item: any) => {
-      insertOrderItem.run(
-        orderId,
-        item.product.id,
-        item.product.name,
-        item.quantity,
-        item.product.price
-      );
-    });
+    const orderId = result.lastInsertRowid;
+    console.log('Order created successfully with ID:', orderId);
 
     return NextResponse.json(
       { 
@@ -59,9 +59,13 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating order:', error);
+    console.error('Detailed error creating order:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      error
+    });
     return NextResponse.json(
-      { error: 'Failed to create order' },
+      { error: `Failed to create order: ${error instanceof Error ? error.message : 'Unknown error'}` },
       { status: 500 }
     );
   }
@@ -71,23 +75,19 @@ export async function GET() {
   try {
     const db = getDatabase();
     
-    // Get all orders with their items using the actual database schema
+    // Get all orders using the actual database schema
     const orders = db.prepare(`
-      SELECT * FROM orders ORDER BY createdAt DESC
+      SELECT * FROM orders ORDER BY created_at DESC
     `).all();
 
-    const ordersWithItems = orders.map((order: any) => {
-      const items = db.prepare(`
-        SELECT * FROM order_items WHERE orderId = ?
-      `).all(order.id);
-
+    const ordersWithParsedItems = orders.map((order: any) => {
       return {
         ...order,
-        items
+        items: JSON.parse(order.items)
       };
     });
 
-    return NextResponse.json(ordersWithItems);
+    return NextResponse.json(ordersWithParsedItems);
   } catch (error) {
     console.error('Error fetching orders:', error);
     return NextResponse.json(

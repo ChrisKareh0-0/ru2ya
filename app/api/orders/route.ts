@@ -32,9 +32,9 @@ export async function POST(request: NextRequest) {
 
     const db = getDatabase();
     
-    // Insert order using the actual database schema
+    // Insert order using the existing database schema
     const insertOrder = db.prepare(`
-      INSERT INTO orders (customer_name, customer_email, customer_phone, items, total_amount, status)
+      INSERT INTO orders (customerName, customerEmail, customerPhone, customerAddress, totalAmount, status)
       VALUES (?, ?, ?, ?, ?, ?)
     `);
 
@@ -42,12 +42,28 @@ export async function POST(request: NextRequest) {
       customerInfo.firstName + ' ' + customerInfo.lastName,
       customerInfo.email,
       customerInfo.phone,
-      JSON.stringify(items),
+      customerInfo.address || '',
       totalAmount,
       'pending'
     );
 
+    // Insert order items into separate table
+    const insertOrderItem = db.prepare(`
+      INSERT INTO order_items (orderId, productId, productName, quantity, price)
+      VALUES (?, ?, ?, ?, ?)
+    `);
+
     const orderId = result.lastInsertRowid;
+    items.forEach((item: any) => {
+      insertOrderItem.run(
+        orderId,
+        item.product.id,
+        item.product.name,
+        item.quantity,
+        item.product.price
+      );
+    });
+
     console.log('Order created successfully with ID:', orderId);
 
     return NextResponse.json(
@@ -75,19 +91,23 @@ export async function GET() {
   try {
     const db = getDatabase();
     
-    // Get all orders using the actual database schema
+    // Get all orders with their items using the existing database schema
     const orders = db.prepare(`
-      SELECT * FROM orders ORDER BY created_at DESC
+      SELECT * FROM orders ORDER BY createdAt DESC
     `).all();
 
-    const ordersWithParsedItems = orders.map((order: any) => {
+    const ordersWithItems = orders.map((order: any) => {
+      const items = db.prepare(`
+        SELECT * FROM order_items WHERE orderId = ?
+      `).all(order.id);
+
       return {
         ...order,
-        items: JSON.parse(order.items)
+        items
       };
     });
 
-    return NextResponse.json(ordersWithParsedItems);
+    return NextResponse.json(ordersWithItems);
   } catch (error) {
     console.error('Error fetching orders:', error);
     return NextResponse.json(

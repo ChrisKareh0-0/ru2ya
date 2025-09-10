@@ -18,10 +18,10 @@ export async function POST(request: NextRequest) {
     const db = getDatabase();
     const orderId = uuidv4();
 
-    // Insert order
+    // Insert order using the actual database schema
     const insertOrder = db.prepare(`
-      INSERT INTO orders (id, customerName, email, phone, address, city, postalCode, country, totalAmount, status, paymentMethod)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO orders (id, customerName, customerEmail, customerPhone, customerAddress, totalAmount, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `);
 
     insertOrder.run(
@@ -29,13 +29,9 @@ export async function POST(request: NextRequest) {
       customerInfo.firstName + ' ' + customerInfo.lastName,
       customerInfo.email,
       customerInfo.phone,
-      customerInfo.address,
-      customerInfo.city,
-      customerInfo.postalCode,
-      customerInfo.country,
+      customerInfo.address || '',
       totalAmount,
-      'pending',
-      'Cash on Delivery'
+      'pending'
     );
 
     // Insert order items
@@ -75,7 +71,7 @@ export async function GET() {
   try {
     const db = getDatabase();
     
-    // Get all orders with their items
+    // Get all orders with their items using the actual database schema
     const orders = db.prepare(`
       SELECT * FROM orders ORDER BY createdAt DESC
     `).all();

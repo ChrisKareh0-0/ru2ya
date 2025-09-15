@@ -18,14 +18,14 @@ export interface Product {
 }
 
 export interface Order {
-  id: number;
-  customer_name: string;
-  customer_email: string;
-  customer_phone: string;
-  items: string;
-  total_amount: number;
+  id: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  customerAddress?: string;
+  totalAmount: number;
   status: string;
-  created_at: string;
+  createdAt: string;
 }
 
 let db: Database.Database | null = null;
@@ -155,14 +155,25 @@ export function getDatabase() {
         );
         
         CREATE TABLE IF NOT EXISTS orders (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          customer_name TEXT NOT NULL,
-          customer_email TEXT NOT NULL,
-          customer_phone TEXT NOT NULL,
-          items TEXT NOT NULL,
-          total_amount REAL NOT NULL,
+          id TEXT PRIMARY KEY,
+          customerName TEXT NOT NULL,
+          customerEmail TEXT NOT NULL,
+          customerPhone TEXT NOT NULL,
+          customerAddress TEXT,
+          totalAmount REAL NOT NULL,
           status TEXT DEFAULT 'pending',
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+          createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE IF NOT EXISTS order_items (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          orderId TEXT NOT NULL,
+          productId INTEGER NOT NULL,
+          productName TEXT NOT NULL,
+          quantity INTEGER NOT NULL,
+          price REAL NOT NULL,
+          FOREIGN KEY (orderId) REFERENCES orders (id),
+          FOREIGN KEY (productId) REFERENCES products (id)
         );
         
         CREATE TABLE IF NOT EXISTS countdown (
@@ -318,35 +329,37 @@ export function deleteProduct(id: number): boolean {
 
 // Order functions
 export function getOrders(): Order[] {
-  return getDatabase().prepare('SELECT * FROM orders ORDER BY created_at DESC').all() as Order[];
+  return getDatabase().prepare('SELECT * FROM orders ORDER BY createdAt DESC').all() as Order[];
 }
 
-export function getOrderById(id: number): Order | null {
+export function getOrderById(id: string): Order | null {
   const result = getDatabase().prepare('SELECT * FROM orders WHERE id = ?').get(id) as Order | undefined;
   return result || null;
 }
 
-export function addOrder(order: Omit<Order, 'id' | 'created_at'>): Order {
+export function addOrder(order: Omit<Order, 'id' | 'createdAt'>): Order {
+  const orderId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
   const result = getDatabase().prepare(`
-    INSERT INTO orders (customer_name, customer_email, customer_phone, items, total_amount, status) 
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO orders (id, customerName, customerEmail, customerPhone, customerAddress, totalAmount, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `).run(
-    order.customer_name,
-    order.customer_email,
-    order.customer_phone,
-    order.items,
-    order.total_amount,
+    orderId,
+    order.customerName,
+    order.customerEmail,
+    order.customerPhone,
+    order.customerAddress || '',
+    order.totalAmount,
     order.status
   );
-  
+
   return {
-    id: result.lastInsertRowid as number,
+    id: orderId,
     ...order,
-    created_at: new Date().toISOString()
+    createdAt: new Date().toISOString()
   };
 }
 
-export function updateOrderStatus(id: number, status: string): boolean {
+export function updateOrderStatus(id: string, status: string): boolean {
   const result = getDatabase().prepare('UPDATE orders SET status = ? WHERE id = ?').run(status, id);
   return result.changes > 0;
 }

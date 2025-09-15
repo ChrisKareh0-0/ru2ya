@@ -28,8 +28,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create non-root user
+# Create non-root user and data directory
 RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+RUN mkdir -p /data && chown nextjs:nodejs /data
 
 # Copy standalone output
 COPY --from=builder /app/.next/standalone ./
@@ -40,12 +41,13 @@ COPY --from=builder /app/public ./public
 EXPOSE 3000
 
 # Default to a modest heap inside container; override with env if needed
-ENV NODE_OPTIONS=--max-old-space-size=460
+ENV NODE_OPTIONS=--max-old-space-size=768
 
 # Run as non-root
 USER nextjs
 
 CMD ["node", "server.js"]
+
 
 
 

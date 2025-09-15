@@ -6,11 +6,14 @@ services:
     build: .
     environment:
       - NODE_ENV=production
-      - NODE_OPTIONS=--max-old-space-size=460
+      - NODE_OPTIONS=--max-old-space-size=768
+      - DATABASE_PATH=/data/ru2ya.db
     ports:
       - "3000:3000"
-    mem_limit: 512m
-    memswap_limit: 512m
+    volumes:
+      - ./data:/data
+    mem_limit: 1g
+    memswap_limit: 1g
     oom_kill_disable: false
     depends_on:
       - cadvisor
@@ -44,6 +47,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
       - prometheus
+
 
 
 

@@ -68,13 +68,16 @@ export default function HomePage() {
             console.log('🎬 Section visible:', sectionId, 'intersection ratio:', entry.intersectionRatio);
             if (sectionId) {
               // Trigger entrance animation when section comes into view
-              setAnimateSections(prev => {
-                console.log('🎭 Setting animation for:', sectionId, 'to true. Previous state:', prev);
-                return {
-                  ...prev,
-                  [sectionId]: true
-                };
-              });
+              // Use setTimeout to defer the state update to avoid render phase updates
+              setTimeout(() => {
+                setAnimateSections(prev => {
+                  console.log('🎭 Setting animation for:', sectionId, 'to true. Previous state:', prev);
+                  return {
+                    ...prev,
+                    [sectionId]: true
+                  };
+                });
+              }, 0);
             }
           }
         });
@@ -162,8 +165,8 @@ export default function HomePage() {
           }
         });
         const featuredData = await featuredResponse.json();
-        console.log('⭐ Featured products fetched:', featuredData.length);
-        setFeaturedProducts(featuredData);
+        console.log('⭐ Featured products fetched:', featuredData);
+        setFeaturedProducts(Array.isArray(featuredData) ? featuredData : []);
 
         // Fetch bestsellers
         const bestsellerResponse = await fetch('/api/products?bestseller=true', {
@@ -175,8 +178,8 @@ export default function HomePage() {
           }
         });
         const bestsellerData = await bestsellerResponse.json();
-        console.log('🔥 Bestsellers fetched:', bestsellerData.length);
-        setBestsellers(bestsellerData);
+        console.log('🔥 Bestsellers fetched:', bestsellerData);
+        setBestsellers(Array.isArray(bestsellerData) ? bestsellerData : []);
 
       } catch (error) {
         console.error('❌ Error fetching homepage data:', error);

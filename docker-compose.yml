@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  app:
+    image: ru2ya:local
+    build: .
+    environment:
+      - NODE_ENV=production
+      - NODE_OPTIONS=--max-old-space-size=768
+      - DATABASE_PATH=/data/ru2ya.db
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/data
+    mem_limit: 1g
+    memswap_limit: 1g
+    oom_kill_disable: false
+    depends_on:
+      - cadvisor
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - cadvisor
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+
+
+
+

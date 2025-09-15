@@ -18,14 +18,14 @@ export interface Product {
 }
 
 export interface Order {
-  id: number;
-  customer_name: string;
-  customer_email: string;
-  customer_phone: string;
-  items: string;
-  total_amount: number;
+  id: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  customerAddress?: string;
+  totalAmount: number;
   status: string;
-  created_at: string;
+  createdAt: string;
 }
 
 let db: Database.Database | null = null;
@@ -113,93 +113,116 @@ export function exportProductsToJSON(): boolean {
 
 export function getDatabase() {
   if (!db) {
-    const config = getDatabaseConfig();
-    db = new Database(config.path);
-    
-    // Enable WAL mode for better performance and lower memory usage
-    db.pragma('journal_mode = WAL');
-
-    // Configure SQLite cache size (in pages). Negative = KiB. Default to 2MB.
-    const envCacheSize = process.env.SQLITE_CACHE_SIZE;
-    const cacheSize = envCacheSize ? Number(envCacheSize) : -2000;
-    db.pragma(`cache_size = ${Number.isFinite(cacheSize) ? cacheSize : -2000}`);
-
-    // Configure temp store (default to memory). Accepts 'memory' or 'file'.
-    const tempStore = (process.env.SQLITE_TEMP_STORE || 'memory').toLowerCase() === 'file' ? 'file' : 'memory';
-    db.pragma(`temp_store = ${tempStore}`);
-
-    // Configure mmap size. Default to 64MB to avoid OOM in low-RAM envs.
-    const envMmapSize = process.env.SQLITE_MMAP_SIZE;
-    const defaultMmapSize = 64 * 1024 * 1024; // 64MB
-    const mmapSize = envMmapSize ? Number(envMmapSize) : defaultMmapSize;
-    db.pragma(`mmap_size = ${Number.isFinite(mmapSize) ? mmapSize : defaultMmapSize}`);
-    
-    // Create tables if they don't exist
-    db.exec(`
-      CREATE TABLE IF NOT EXISTS products (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        description TEXT,
-        price REAL NOT NULL,
-        image TEXT,
-        category TEXT,
-        featured BOOLEAN DEFAULT 0,
-        bestseller BOOLEAN DEFAULT 0,
-        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
+    try {
+      const config = getDatabaseConfig();
+      console.log('🔧 Initializing database at:', config.path);
       
-      CREATE TABLE IF NOT EXISTS orders (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        customer_name TEXT NOT NULL,
-        customer_email TEXT NOT NULL,
-        customer_phone TEXT NOT NULL,
-        items TEXT NOT NULL,
-        total_amount REAL NOT NULL,
-        status TEXT DEFAULT 'pending',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
+      db = new Database(config.path);
       
-      CREATE TABLE IF NOT EXISTS countdown (
-        id INTEGER PRIMARY KEY,
-        end_date DATETIME NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-    
-    // Check if products table is empty and load from JSON
-    const productCount = db.prepare('SELECT COUNT(*) as count FROM products').get() as { count: number };
-    
-    if (productCount.count === 0) {
-      console.log('🔄 Products table is empty, loading from JSON file...');
-      const products = loadProductsFromJSON();
+      // Enable WAL mode for better performance and lower memory usage
+      db.pragma('journal_mode = WAL');
+
+      // Enable foreign key constraints
+      db.pragma('foreign_keys = ON');
+
+      // Configure SQLite cache size (in pages). Negative = KiB. Default to 2MB.
+      const envCacheSize = process.env.SQLITE_CACHE_SIZE;
+      const cacheSize = envCacheSize ? Number(envCacheSize) : -2000;
+      db.pragma(`cache_size = ${Number.isFinite(cacheSize) ? cacheSize : -2000}`);
+
+      // Configure temp store (default to memory). Accepts 'memory' or 'file'.
+      const tempStore = (process.env.SQLITE_TEMP_STORE || 'memory').toLowerCase() === 'file' ? 'file' : 'memory';
+      db.pragma(`temp_store = ${tempStore}`);
+
+      // Configure mmap size. Default to 64MB to avoid OOM in low-RAM envs.
+      const envMmapSize = process.env.SQLITE_MMAP_SIZE;
+      const defaultMmapSize = 64 * 1024 * 1024; // 64MB
+      const mmapSize = envMmapSize ? Number(envMmapSize) : defaultMmapSize;
+      db.pragma(`mmap_size = ${Number.isFinite(mmapSize) ? mmapSize : defaultMmapSize}`);
       
-      if (products.length > 0) {
-        const insertProduct = db.prepare(`
-          INSERT INTO products (name, description, price, image, category, featured, bestseller) 
-          VALUES (?, ?, ?, ?, ?, ?, ?)
-        `);
+      console.log('📋 Creating database tables...');
+      
+      // Create tables if they don't exist
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS products (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          description TEXT,
+          price REAL NOT NULL,
+          image TEXT,
+          category TEXT,
+          featured BOOLEAN DEFAULT 0,
+          bestseller BOOLEAN DEFAULT 0,
+          createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
         
-        // Begin transaction for faster insertion
-        const transaction = db.transaction(() => {
-          for (const product of products) {
-            insertProduct.run(
-              product.name,
-              product.description,
-              product.price,
-              product.image,
-              product.category,
-              product.featured ? 1 : 0,
-              product.bestseller ? 1 : 0
-            );
-          }
-        });
+        CREATE TABLE IF NOT EXISTS orders (
+          id TEXT PRIMARY KEY,
+          customerName TEXT NOT NULL,
+          customerEmail TEXT NOT NULL,
+          customerPhone TEXT NOT NULL,
+          customerAddress TEXT,
+          totalAmount REAL NOT NULL,
+          status TEXT DEFAULT 'pending',
+          createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE IF NOT EXISTS order_items (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          orderId TEXT NOT NULL,
+          productId INTEGER,
+          productName TEXT NOT NULL,
+          quantity INTEGER NOT NULL,
+          price REAL NOT NULL
+        );
         
-        transaction();
-        console.log(`✅ Successfully loaded ${products.length} products from JSON file`);
+        CREATE TABLE IF NOT EXISTS countdown (
+          id INTEGER PRIMARY KEY,
+          end_date DATETIME NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      
+      console.log('✅ Database tables created successfully');
+      
+      // Check if products table is empty and load from JSON
+      const productCount = db.prepare('SELECT COUNT(*) as count FROM products').get() as { count: number };
+      
+      if (productCount.count === 0) {
+        console.log('🔄 Products table is empty, loading from JSON file...');
+        const products = loadProductsFromJSON();
+        
+        if (products.length > 0) {
+          const insertProduct = db.prepare(`
+            INSERT INTO products (name, description, price, image, category, featured, bestseller) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+          `);
+          
+          // Begin transaction for faster insertion
+          const transaction = db.transaction(() => {
+            for (const product of products) {
+              insertProduct.run(
+                product.name,
+                product.description,
+                product.price,
+                product.image,
+                product.category,
+                product.featured ? 1 : 0,
+                product.bestseller ? 1 : 0
+              );
+            }
+          });
+          
+          transaction();
+          console.log(`✅ Successfully loaded ${products.length} products from JSON file`);
+        }
+      } else {
+        console.log(`📦 Database already contains ${productCount.count} products`);
       }
-    } else {
-      console.log(`📦 Database already contains ${productCount.count} products`);
+    } catch (error) {
+      console.error('❌ Failed to initialize database:', error);
+      throw error;
     }
   }
   return db;
@@ -307,35 +330,37 @@ export function deleteProduct(id: number): boolean {
 
 // Order functions
 export function getOrders(): Order[] {
-  return getDatabase().prepare('SELECT * FROM orders ORDER BY created_at DESC').all() as Order[];
+  return getDatabase().prepare('SELECT * FROM orders ORDER BY createdAt DESC').all() as Order[];
 }
 
-export function getOrderById(id: number): Order | null {
+export function getOrderById(id: string): Order | null {
   const result = getDatabase().prepare('SELECT * FROM orders WHERE id = ?').get(id) as Order | undefined;
   return result || null;
 }
 
-export function addOrder(order: Omit<Order, 'id' | 'created_at'>): Order {
+export function addOrder(order: Omit<Order, 'id' | 'createdAt'>): Order {
+  const orderId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
   const result = getDatabase().prepare(`
-    INSERT INTO orders (customer_name, customer_email, customer_phone, items, total_amount, status) 
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO orders (id, customerName, customerEmail, customerPhone, customerAddress, totalAmount, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `).run(
-    order.customer_name,
-    order.customer_email,
-    order.customer_phone,
-    order.items,
-    order.total_amount,
+    orderId,
+    order.customerName,
+    order.customerEmail,
+    order.customerPhone,
+    order.customerAddress || '',
+    order.totalAmount,
     order.status
   );
-  
+
   return {
-    id: result.lastInsertRowid as number,
+    id: orderId,
     ...order,
-    created_at: new Date().toISOString()
+    createdAt: new Date().toISOString()
   };
 }
 
-export function updateOrderStatus(id: number, status: string): boolean {
+export function updateOrderStatus(id: string, status: string): boolean {
   const result = getDatabase().prepare('UPDATE orders SET status = ? WHERE id = ?').run(status, id);
   return result.changes > 0;
 }

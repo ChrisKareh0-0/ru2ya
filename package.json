@@ -20,7 +20,8 @@
     "start:render": "npm run start",
     "remove-demo": "node scripts/remove-demo-products.js",
     "reset-products": "node scripts/reset-products.js",
-    "test-export": "node scripts/test-json-export.js"
+    "test-export": "node scripts/test-json-export.js",
+    "migrate-schema": "node scripts/migrate-schema.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",

@@ -22,6 +22,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate items array
+    if (!Array.isArray(items) || items.length === 0) {
+      return NextResponse.json(
+        { error: 'Invalid or empty items array' },
+        { status: 400 }
+      );
+    }
+
+    // Validate each item structure
+    for (const item of items) {
+      if (!item.product || !item.product.name || !item.quantity) {
+        return NextResponse.json(
+          { error: 'Invalid item structure' },
+          { status: 400 }
+        );
+      }
+    }
+
     console.log('Attempting to create order with data:', {
       customerName: customerInfo.firstName + ' ' + customerInfo.lastName,
       email: customerInfo.email,
@@ -31,41 +49,47 @@ export async function POST(request: NextRequest) {
     });
 
     const db = getDatabase();
-    
-    // Insert order using the schema from migration script (camelCase)
-    const insertOrder = db.prepare(`
-      INSERT INTO orders (id, customerName, customerEmail, customerPhone, customerAddress, totalAmount, status)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `);
 
     // Generate a simple UUID-like ID
     const orderId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
 
-    const result = insertOrder.run(
-      orderId,
-      customerInfo.firstName + ' ' + customerInfo.lastName,
-      customerInfo.email,
-      customerInfo.phone,
-      customerInfo.address || '',
-      totalAmount,
-      'pending'
-    );
+    // Use a transaction to ensure atomicity
+    const transaction = db.transaction(() => {
+      // Insert order using the schema from migration script (camelCase)
+      const insertOrder = db.prepare(`
+        INSERT INTO orders (id, customerName, customerEmail, customerPhone, customerAddress, totalAmount, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `);
 
-    // Insert order items into separate table
-    const insertOrderItem = db.prepare(`
-      INSERT INTO order_items (orderId, productId, productName, quantity, price)
-      VALUES (?, ?, ?, ?, ?)
-    `);
-
-    items.forEach((item: any) => {
-      insertOrderItem.run(
+      insertOrder.run(
         orderId,
-        item.product.id,
-        item.product.name,
-        item.quantity,
-        item.product.price
+        customerInfo.firstName + ' ' + customerInfo.lastName,
+        customerInfo.email,
+        customerInfo.phone,
+        customerInfo.address || '',
+        totalAmount,
+        'pending'
       );
+
+      // Insert order items into separate table
+      const insertOrderItem = db.prepare(`
+        INSERT INTO order_items (orderId, productId, productName, quantity, price)
+        VALUES (?, ?, ?, ?, ?)
+      `);
+
+      items.forEach((item: any) => {
+        insertOrderItem.run(
+          orderId,
+          item.product.id || null,
+          item.product.name || 'Unknown Product',
+          item.quantity || 1,
+          item.product.price || 0
+        );
+      });
     });
+
+    // Execute the transaction
+    transaction();
 
     console.log('Order created successfully with ID:', orderId);
 

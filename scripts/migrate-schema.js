@@ -73,7 +73,7 @@ function migrateDatabase() {
       console.log('✅ Orders table migration completed');
     }
 
-    // Create order_items table if it doesn't exist
+    // Create or update order_items table
     const orderItemsExists = tableNames.includes('order_items');
     if (!orderItemsExists) {
       console.log('🔄 Creating order_items table...');
@@ -81,15 +81,55 @@ function migrateDatabase() {
         CREATE TABLE IF NOT EXISTS order_items (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           orderId TEXT NOT NULL,
-          productId INTEGER NOT NULL,
+          productId INTEGER,
           productName TEXT NOT NULL,
           quantity INTEGER NOT NULL,
-          price REAL NOT NULL,
-          FOREIGN KEY (orderId) REFERENCES orders (id),
-          FOREIGN KEY (productId) REFERENCES products (id)
+          price REAL NOT NULL
         );
       `);
       console.log('✅ order_items table created');
+    } else {
+      // Check if existing table has foreign key constraints and remove them
+      const orderItemsSchema = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='order_items'").get();
+      if (orderItemsSchema && orderItemsSchema.sql.includes('FOREIGN KEY')) {
+        console.log('🔄 Removing foreign key constraints from order_items table...');
+
+        // Get existing data
+        const existingItems = db.prepare('SELECT * FROM order_items').all();
+
+        // Drop and recreate table without foreign keys
+        db.exec('DROP TABLE order_items');
+        db.exec(`
+          CREATE TABLE order_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            orderId TEXT NOT NULL,
+            productId INTEGER,
+            productName TEXT NOT NULL,
+            quantity INTEGER NOT NULL,
+            price REAL NOT NULL
+          );
+        `);
+
+        // Restore data
+        if (existingItems.length > 0) {
+          const insertItem = db.prepare(`
+            INSERT INTO order_items (orderId, productId, productName, quantity, price)
+            VALUES (?, ?, ?, ?, ?)
+          `);
+
+          for (const item of existingItems) {
+            insertItem.run(
+              item.orderId,
+              item.productId,
+              item.productName,
+              item.quantity,
+              item.price
+            );
+          }
+        }
+
+        console.log('✅ Foreign key constraints removed from order_items table');
+      }
     }
 
     console.log('✅ Database schema migration completed successfully');

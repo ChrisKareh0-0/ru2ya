@@ -122,6 +122,9 @@ export function getDatabase() {
       // Enable WAL mode for better performance and lower memory usage
       db.pragma('journal_mode = WAL');
 
+      // Enable foreign key constraints
+      db.pragma('foreign_keys = ON');
+
       // Configure SQLite cache size (in pages). Negative = KiB. Default to 2MB.
       const envCacheSize = process.env.SQLITE_CACHE_SIZE;
       const cacheSize = envCacheSize ? Number(envCacheSize) : -2000;
@@ -168,12 +171,10 @@ export function getDatabase() {
         CREATE TABLE IF NOT EXISTS order_items (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           orderId TEXT NOT NULL,
-          productId INTEGER NOT NULL,
+          productId INTEGER,
           productName TEXT NOT NULL,
           quantity INTEGER NOT NULL,
-          price REAL NOT NULL,
-          FOREIGN KEY (orderId) REFERENCES orders (id),
-          FOREIGN KEY (productId) REFERENCES products (id)
+          price REAL NOT NULL
         );
         
         CREATE TABLE IF NOT EXISTS countdown (

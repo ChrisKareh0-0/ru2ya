@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import ProductCard from '@/components/ProductCard';
 import Cart from '@/components/Cart';
 import Footer from '@/components/Footer';
+import ChristmasDecorations from '@/components/ChristmasDecorations';
 import { CartManager, CartItem } from '@/lib/cart';
 import { Product } from '@/lib/products';
 
@@ -228,12 +229,13 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header 
-        cartItems={cartItems} 
-        onCartToggle={() => setIsCartOpen(!isCartOpen)} 
+      <ChristmasDecorations />
+      <Header
+        cartItems={cartItems}
+        onCartToggle={() => setIsCartOpen(!isCartOpen)}
       />
       
-      <main className="pt-20">
+      <main className="pt-20 relative">
         {/* Hero Section */}
         <section className={`relative py-32 sm:py-40 md:py-60 px-4 min-h-[70vh] sm:min-h-[75vh] md:min-h-[65vh] overflow-visible transition-all duration-1000 ${
           animateLogo ? 'opacity-100' : 'opacity-0'

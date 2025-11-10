@@ -175,3 +175,72 @@ a:focus-visible {
 .cart-backdrop-enter {
   animation: fadeIn 0.3s ease-out forwards;
 }
+
+/* Christmas Decorations Animations */
+@keyframes christmasSnow {
+  0% {
+    transform: translateY(-20px) translateX(0);
+  }
+  100% {
+    transform: translateY(100vh) translateX(100px);
+  }
+}
+
+@keyframes christmasSwing {
+  0% {
+    transform: translateX(0) rotateZ(0deg);
+  }
+  25% {
+    transform: translateX(20px) rotateZ(5deg);
+  }
+  50% {
+    transform: translateX(0) rotateZ(0deg);
+  }
+  75% {
+    transform: translateX(-20px) rotateZ(-5deg);
+  }
+  100% {
+    transform: translateX(0) rotateZ(0deg);
+  }
+}
+
+@keyframes christmasRotate {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  100% {
+    transform: rotateX(360deg) rotateY(360deg);
+  }
+}
+
+@keyframes christmasGarland {
+  0% {
+    transform: translateX(-10px) scaleX(0.8);
+  }
+  50% {
+    transform: translateX(0) scaleX(1);
+  }
+  100% {
+    transform: translateX(10px) scaleX(0.8);
+  }
+}
+
+@layer utilities {
+  .animate-christmas-snow {
+    animation: christmasSnow linear infinite;
+  }
+
+  .animate-christmas-swing {
+    animation: christmasSwing ease-in-out infinite;
+    transform-origin: center top;
+  }
+
+  .animate-christmas-rotate {
+    animation: christmasRotate linear 4s infinite;
+    perspective: 1000px;
+  }
+
+  .animate-christmas-garland {
+    animation: christmasGarland ease-in-out 6s infinite;
+  }
+}

@@ -9,6 +9,7 @@
 // Memory optimization for low-resource hosting
 // Memory optimization for low-resource hosting
 // Memory optimization for low-resource hosting
+// Memory optimization for low-resource hosting
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   swcMinify: true,

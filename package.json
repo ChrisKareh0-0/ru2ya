@@ -28,7 +28,6 @@
     "@types/uuid": "^10.0.0",
     "better-sqlite3": "^12.2.0",
     "clsx": "^2.1.1",
-    "influx": "^5.9.3",
     "next": "^14.2.0",
     "prom-client": "^15.1.0",
     "react": "^18.2.0",

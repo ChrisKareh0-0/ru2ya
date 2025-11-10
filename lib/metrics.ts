@@ -1,5 +1,4 @@
 import { register, Counter, Histogram, Gauge } from 'prom-client';
-import { InfluxDB, Point } from '@influxdata/influxdb-client';
 
 // Initialize Prometheus metrics
 export const httpRequestDuration = new Histogram({
@@ -52,53 +51,8 @@ export const databaseConnections = new Gauge({
   labelNames: ['status']
 });
 
-// Initialize InfluxDB client
-let influxClient: any;
-
-export function initializeInfluxDB() {
-  if (process.env.INFLUXDB_URL) {
-    const { InfluxDB: InfluxDBClient } = require('@influxdata/influxdb-client');
-
-    influxClient = new InfluxDBClient({
-      url: process.env.INFLUXDB_URL || 'http://influxdb:8086',
-      token: process.env.INFLUXDB_TOKEN,
-      org: process.env.INFLUXDB_ORG || 'ru2ya',
-      bucket: process.env.INFLUXDB_BUCKET || 'metrics'
-    });
-  }
-}
-
-// Write metrics to InfluxDB
-export async function writeMetricToInfluxDB(
-  measurement: string,
-  fields: Record<string, number>,
-  tags: Record<string, string> = {}
-) {
-  if (!influxClient) return;
-
-  try {
-    const writeApi = influxClient.getWriteApi(
-      process.env.INFLUXDB_ORG || 'ru2ya',
-      process.env.INFLUXDB_BUCKET || 'metrics'
-    );
-
-    const point = new Point(measurement)
-      .timestamp(new Date());
-
-    Object.entries(tags).forEach(([key, value]) => {
-      point.tag(key, value);
-    });
-
-    Object.entries(fields).forEach(([key, value]) => {
-      point.floatField(key, value);
-    });
-
-    writeApi.writePoint(point);
-    await writeApi.close();
-  } catch (error) {
-    console.error('Error writing to InfluxDB:', error);
-  }
-}
+// InfluxDB client removed - metrics are exposed via Prometheus endpoint
+// If you need InfluxDB integration later, add @influxdata/influxdb-client package
 
 // Record HTTP metrics
 export function recordHttpMetrics(
@@ -121,45 +75,29 @@ export function recordHttpMetrics(
     },
     duration / 1000 // Convert to seconds
   );
-
-  writeMetricToInfluxDB('http_request', { duration_ms: duration, status }, {
-    method,
-    route
-  });
 }
 
 // Record cart operations
 export function recordCartOperation(operation: string, status: 'success' | 'error') {
   cartOperations.inc({ operation, status });
-  writeMetricToInfluxDB('cart_operation', { count: 1 }, {
-    operation,
-    status
-  });
 }
 
 // Record product views
 export function recordProductView(productId: string | number) {
   productViews.inc({ product_id: productId.toString() });
-  writeMetricToInfluxDB('product_view', { count: 1 }, {
-    product_id: productId.toString()
-  });
 }
 
 // Record checkout attempts
 export function recordCheckoutAttempt(status: 'success' | 'failed' | 'started') {
   checkoutAttempts.inc({ status });
-  writeMetricToInfluxDB('checkout_attempt', { count: 1 }, { status });
 }
 
 // Record database query metrics
 export function recordDatabaseQuery(queryType: string, duration: number) {
   databaseQueryDuration.observe({ query_type: queryType }, duration / 1000);
-  writeMetricToInfluxDB('database_query', { duration_ms: duration }, {
-    query_type: queryType
-  });
 }
 
 // Get all metrics in Prometheus format
-export function getMetrics() {
+export async function getMetrics(): Promise<string> {
   return register.metrics();
 }

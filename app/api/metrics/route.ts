@@ -3,7 +3,7 @@ import { getMetrics } from '@/lib/metrics';
 
 export async function GET(request: NextRequest) {
   try {
-    const metrics = getMetrics();
+    const metrics = await getMetrics();
 
     return new NextResponse(metrics, {
       status: 200,

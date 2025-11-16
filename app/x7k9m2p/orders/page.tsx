@@ -7,16 +7,13 @@ import { useRouter } from 'next/navigation';
 interface Order {
   id: string;
   customerName: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  postalCode: string;
-  country: string;
+  customerEmail: string;
+  customerPhone: string;
+  customerAddress: string;
   totalAmount: number;
   status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
   createdAt: string;
-  paymentMethod: string;
+  paymentMethod?: string;
   items: Array<{
     id: number;
     orderId: string;
@@ -178,11 +175,10 @@ export default function OrdersPage() {
                     <h4 className="text-lg font-light text-[#7C805A] mb-3">Customer Information</h4>
                     <div className="space-y-2 text-[#7C805A] font-light">
                       <p><span className="font-medium">Name:</span> {order.customerName}</p>
-                      <p><span className="font-medium">Email:</span> {order.email}</p>
-                      <p><span className="font-medium">Phone:</span> {order.phone}</p>
-                      <p><span className="font-medium">Address:</span> {order.address}</p>
-                      <p><span className="font-medium">City:</span> {order.city}, {order.country}</p>
-                      <p><span className="font-medium">Payment:</span> {order.paymentMethod}</p>
+                      <p><span className="font-medium">Email:</span> {order.customerEmail}</p>
+                      <p><span className="font-medium">Phone:</span> {order.customerPhone}</p>
+                      <p><span className="font-medium">Address:</span> {order.customerAddress}</p>
+                      {order.paymentMethod && <p><span className="font-medium">Payment:</span> {order.paymentMethod}</p>}
                     </div>
                   </div>
 

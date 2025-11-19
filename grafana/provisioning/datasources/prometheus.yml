@@ -1,0 +1,22 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    url: http://prometheus:9090
+    access: proxy
+    isDefault: true
+    editable: true
+
+  - name: InfluxDB
+    type: influxdb
+    url: http://influxdb:8086
+    access: proxy
+    jsonData:
+      version: InfluxQL
+      organization: ru2ya
+      bucket: metrics
+      token: ${INFLUXDB_TOKEN}
+    secureJsonData:
+      token: ${INFLUXDB_TOKEN}
+    editable: true

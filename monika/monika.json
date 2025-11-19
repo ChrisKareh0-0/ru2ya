@@ -1,0 +1,155 @@
+{
+  "version": 1,
+  "logLevel": "info",
+  "notifications": [
+    {
+      "id": "sendgrid-notification",
+      "type": "sendgrid",
+      "data": {
+        "apiKey": "${SENDGRID_API_KEY}",
+        "from": "alerts@ru2ya.com",
+        "to": ["admin@ru2ya.com"]
+      }
+    },
+    {
+      "id": "console-notification",
+      "type": "console",
+      "data": {}
+    }
+  ],
+  "probes": [
+    {
+      "id": "homepage-check",
+      "name": "Homepage Availability",
+      "description": "Monitor Ru2ya homepage status",
+      "interval": 60,
+      "requests": [
+        {
+          "url": "http://app:3000",
+          "method": "GET",
+          "timeout": 10000,
+          "retries": 2,
+          "body": ""
+        }
+      ],
+      "alerts": [
+        {
+          "query": "response.status != 200",
+          "message": "Homepage is down! Status: {response.status}",
+          "threshold": 2
+        },
+        {
+          "query": "response.time > 5000",
+          "message": "Homepage response time is slow: {response.time}ms",
+          "threshold": 3
+        }
+      ]
+    },
+    {
+      "id": "api-health-check",
+      "name": "API Health Status",
+      "description": "Monitor API health endpoint",
+      "interval": 30,
+      "requests": [
+        {
+          "url": "http://app:3000/api/products",
+          "method": "GET",
+          "timeout": 10000,
+          "retries": 1
+        }
+      ],
+      "alerts": [
+        {
+          "query": "response.status != 200",
+          "message": "API is unhealthy! Status: {response.status}",
+          "threshold": 2
+        },
+        {
+          "query": "response.time > 3000",
+          "message": "API response time is slow: {response.time}ms",
+          "threshold": 2
+        }
+      ]
+    },
+    {
+      "id": "products-page-check",
+      "name": "Products Page Check",
+      "description": "Monitor products page performance",
+      "interval": 60,
+      "requests": [
+        {
+          "url": "http://app:3000/products",
+          "method": "GET",
+          "timeout": 10000
+        }
+      ],
+      "alerts": [
+        {
+          "query": "response.status != 200",
+          "message": "Products page returned error: {response.status}",
+          "threshold": 2
+        }
+      ]
+    },
+    {
+      "id": "checkout-page-check",
+      "name": "Checkout Page Check",
+      "description": "Monitor checkout page availability",
+      "interval": 120,
+      "requests": [
+        {
+          "url": "http://app:3000/checkout",
+          "method": "GET",
+          "timeout": 10000
+        }
+      ],
+      "alerts": [
+        {
+          "query": "response.status != 200",
+          "message": "Checkout page is not accessible: {response.status}",
+          "threshold": 2
+        }
+      ]
+    },
+    {
+      "id": "admin-dashboard-check",
+      "name": "Admin Dashboard Check",
+      "description": "Monitor admin dashboard availability",
+      "interval": 300,
+      "requests": [
+        {
+          "url": "http://app:3000/x7k9m2p",
+          "method": "GET",
+          "timeout": 10000
+        }
+      ],
+      "alerts": [
+        {
+          "query": "response.status != 200 && response.status != 302",
+          "message": "Admin dashboard issue: {response.status}",
+          "threshold": 1
+        }
+      ]
+    },
+    {
+      "id": "ssl-certificate-check",
+      "name": "SSL Certificate Check",
+      "description": "Monitor SSL certificate validity",
+      "interval": 86400,
+      "requests": [
+        {
+          "url": "https://ru2ya.com",
+          "method": "GET",
+          "timeout": 10000
+        }
+      ],
+      "alerts": [
+        {
+          "query": "certificate.daysUntilExpiration < 30",
+          "message": "SSL certificate expires in {certificate.daysUntilExpiration} days",
+          "threshold": 1
+        }
+      ]
+    }
+  ]
+}

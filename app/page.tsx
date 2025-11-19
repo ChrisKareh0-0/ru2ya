@@ -229,11 +229,12 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header 
-        cartItems={cartItems} 
-        onCartToggle={() => setIsCartOpen(!isCartOpen)} 
+      <ChristmasDecorations />
+      <Header
+        cartItems={cartItems}
+        onCartToggle={() => setIsCartOpen(!isCartOpen)}
       />
-      
+
       <main>
         {/* Hero Section */}
         <section className={`relative py-32 sm:py-40 md:py-60 px-4 min-h-[70vh] sm:min-h-[75vh] md:min-h-[65vh] overflow-hidden transition-all duration-1000 ${

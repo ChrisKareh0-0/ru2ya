@@ -229,7 +229,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <ChristmasDecorations />
       <Header
         cartItems={cartItems}
         onCartToggle={() => setIsCartOpen(!isCartOpen)}

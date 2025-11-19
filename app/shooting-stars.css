@@ -1,0 +1,214 @@
+/* Shooting Stars Background Animation */
+.shooting-stars-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  /* background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%); */
+  overflow: hidden;
+  top: -50%;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+.night {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform: rotateZ(45deg);
+}
+
+.shooting_star {
+  position: absolute;
+  left: 50%;
+  top: -50%;
+  height: 2px;
+  background: linear-gradient(-45deg, rgba(255, 215, 0, 1), rgba(255, 215, 0, 0));
+  border-radius: 999px;
+  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 1));
+  animation:
+    tail 3000ms ease-in-out infinite,
+    shooting 3000ms ease-in-out infinite;
+}
+
+.shooting_star::before {
+  content: '';
+  position: absolute;
+  top: calc(50% - 1px);
+  right: 0;
+  height: 2px;
+  background: linear-gradient(-45deg, rgba(255, 215, 0, 0), rgba(255, 215, 0, 1), rgba(255, 215, 0, 0));
+  transform: translateX(50%) rotateZ(45deg);
+  border-radius: 100%;
+  animation: shining 3000ms ease-in-out infinite;
+}
+
+.shooting_star::after {
+  content: '';
+  position: absolute;
+  top: calc(30% - 1px);
+  right: 0;
+  height: 2px;
+  background: linear-gradient(-45deg, rgba(255, 215, 0, 0), rgba(255, 215, 0, 1), rgba(255, 215, 0, 0));
+  transform: translateX(50%) rotateZ(-45deg);
+  border-radius: 100%;
+  animation: shining 3000ms ease-in-out infinite;
+}
+
+/* Shooting star nth-child delays */
+.shooting_star:nth-child(1) {
+  top: calc(50% - 23px);
+  left: calc(50% - 156px);
+  animation-delay: 234ms;
+}
+
+.shooting_star:nth-child(2) {
+  top: calc(50% - 102px);
+  left: calc(50% - 289px);
+  animation-delay: 567ms;
+}
+
+.shooting_star:nth-child(3) {
+  top: calc(50% - 176px);
+  left: calc(50% - 45px);
+  animation-delay: 891ms;
+}
+
+.shooting_star:nth-child(4) {
+  top: calc(50% - 134px);
+  left: calc(50% - 212px);
+  animation-delay: 1234ms;
+}
+
+.shooting_star:nth-child(5) {
+  top: calc(50% - 89px);
+  left: calc(50% - 167px);
+  animation-delay: 1567ms;
+}
+
+.shooting_star:nth-child(6) {
+  top: calc(50% - 145px);
+  left: calc(50% - 98px);
+  animation-delay: 1890ms;
+}
+
+.shooting_star:nth-child(7) {
+  top: calc(50% - 78px);
+  left: calc(50% - 234px);
+  animation-delay: 2123ms;
+}
+
+.shooting_star:nth-child(8) {
+  top: calc(50% - 156px);
+  left: calc(50% - 145px);
+  animation-delay: 2456ms;
+}
+
+.shooting_star:nth-child(9) {
+  top: calc(50% - 112px);
+  left: calc(50% - 267px);
+  animation-delay: 2789ms;
+}
+
+.shooting_star:nth-child(10) {
+  top: calc(50% - 198px);
+  left: calc(50% - 123px);
+  animation-delay: 3012ms;
+}
+
+.shooting_star:nth-child(11) {
+  top: calc(50% - 67px);
+  left: calc(50% - 189px);
+  animation-delay: 345ms;
+}
+
+.shooting_star:nth-child(12) {
+  top: calc(50% - 134px);
+  left: calc(50% - 212px);
+  animation-delay: 678ms;
+}
+
+.shooting_star:nth-child(13) {
+  top: calc(50% - 91px);
+  left: calc(50% - 156px);
+  animation-delay: 1012ms;
+}
+
+.shooting_star:nth-child(14) {
+  top: calc(50% - 167px);
+  left: calc(50% - 234px);
+  animation-delay: 1345ms;
+}
+
+.shooting_star:nth-child(15) {
+  top: calc(50% - 123px);
+  left: calc(50% - 89px);
+  animation-delay: 1678ms;
+}
+
+.shooting_star:nth-child(16) {
+  top: calc(50% - 178px);
+  left: calc(50% - 267px);
+  animation-delay: 2001ms;
+}
+
+.shooting_star:nth-child(17) {
+  top: calc(50% - 45px);
+  left: calc(50% - 145px);
+  animation-delay: 2334ms;
+}
+
+.shooting_star:nth-child(18) {
+  top: calc(50% - 189px);
+  left: calc(50% - 198px);
+  animation-delay: 2667ms;
+}
+
+.shooting_star:nth-child(19) {
+  top: calc(50% - 101px);
+  left: calc(50% - 212px);
+  animation-delay: 2890ms;
+}
+
+.shooting_star:nth-child(20) {
+  top: calc(50% - 145px);
+  left: calc(50% - 123px);
+  animation-delay: 3123ms;
+}
+
+@keyframes tail {
+  0% {
+    width: 0;
+  }
+
+  30% {
+    width: 100px;
+  }
+
+  100% {
+    width: 0;
+  }
+}
+
+@keyframes shining {
+  0% {
+    width: 0;
+  }
+
+  50% {
+    width: 30px;
+  }
+
+  100% {
+    width: 0;
+  }
+}
+
+@keyframes shooting {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(300px);
+  }
+}

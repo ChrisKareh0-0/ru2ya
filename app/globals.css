@@ -175,3 +175,5 @@ a:focus-visible {
 .cart-backdrop-enter {
   animation: fadeIn 0.3s ease-out forwards;
 }
+
+@import './shooting-stars.css';

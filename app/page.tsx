@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import ProductCard from '@/components/ProductCard';
 import Cart from '@/components/Cart';
 import Footer from '@/components/Footer';
+import ShootingStars from '@/components/ShootingStars';
 import { CartManager, CartItem } from '@/lib/cart';
 import { Product } from '@/lib/products';
 
@@ -233,11 +234,37 @@ export default function HomePage() {
         onCartToggle={() => setIsCartOpen(!isCartOpen)} 
       />
       
-      <main className="pt-20">
+      <main>
         {/* Hero Section */}
-        <section className={`relative py-32 sm:py-40 md:py-60 px-4 min-h-[70vh] sm:min-h-[75vh] md:min-h-[65vh] overflow-visible transition-all duration-1000 ${
+        <section className={`relative py-32 sm:py-40 md:py-60 px-4 min-h-[70vh] sm:min-h-[75vh] md:min-h-[65vh] overflow-hidden transition-all duration-1000 ${
           animateLogo ? 'opacity-100' : 'opacity-0'
         }`}>
+          {/* Shooting Stars Background - Multiple instances for full width and height coverage */}
+          {/* Top row */}
+          {/* <ShootingStars leftOffset={-900} topOffset={-200} /> */}
+          <ShootingStars leftOffset={-900} topOffset={-300} />
+          <ShootingStars leftOffset={-600} topOffset={-300} />
+          <ShootingStars leftOffset={-300} topOffset={-300} />
+          <ShootingStars leftOffset={0} topOffset={-300} />
+          <ShootingStars leftOffset={300} topOffset={-300} />
+          <ShootingStars leftOffset={600} topOffset={-300} />
+          <ShootingStars leftOffset={900} topOffset={-300} />
+          {/* <ShootingStars leftOffset={900} topOffset={-200} /> */}
+
+          {/* Middle row */}
+          {/* <ShootingStars leftOffset={-300} topOffset={150} />
+          <ShootingStars leftOffset={0} topOffset={150} />
+          <ShootingStars leftOffset={300} topOffset={150} />
+          <ShootingStars leftOffset={600} topOffset={150} />
+          <ShootingStars leftOffset={900} topOffset={150} /> */}
+
+          {/* Bottom row */}
+          {/* <ShootingStars leftOffset={-300} topOffset={300} />
+          <ShootingStars leftOffset={0} topOffset={300} />
+          <ShootingStars leftOffset={300} topOffset={300} />
+          <ShootingStars leftOffset={600} topOffset={300} />
+          <ShootingStars leftOffset={900} topOffset={300} /> */}
+
           <div className="container mx-auto text-center relative z-10">
             <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl font-light mb-8 sm:mb-12 font-elegant drop-shadow-2xl leading-[1.3] overflow-visible md:pb-6">
               <span style={{height: 'auto'}}

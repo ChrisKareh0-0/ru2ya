@@ -47,7 +47,7 @@ export default function AdminDashboard() {
     const dataStr = JSON.stringify(exportData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.download = `ru2ya-products-${new Date().toISOString().split('T')[0]}.json`;
@@ -55,7 +55,7 @@ export default function AdminDashboard() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    
+
     showMessage('Products exported successfully!');
   };
 
@@ -66,7 +66,7 @@ export default function AdminDashboard() {
     try {
       const text = await file.text();
       const importData = JSON.parse(text);
-      
+
       if (!Array.isArray(importData)) {
         throw new Error('Invalid file format. Expected an array of products.');
       }
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
 
       // Refresh products list
       await fetchProducts();
-      
+
       if (errorCount === 0) {
         showMessage(`Successfully imported ${successCount} products!`);
       } else {
@@ -155,13 +155,13 @@ export default function AdminDashboard() {
         credentials: 'include'
       });
       console.log('📡 Admin products response status:', response.status);
-      
+
       if (response.status === 401) {
         console.log('❌ Unauthorized, redirecting to login');
         router.push('/x7k9m2p');
         return;
       }
-      
+
       const data = await response.json();
       console.log('✅ Admin products fetched:', data.length, 'products');
       setProducts(data);
@@ -175,7 +175,7 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = async () => {
-    await fetch('/api/admin/logout', { 
+    await fetch('/api/admin/logout', {
       method: 'POST',
       credentials: 'include'
     });
@@ -185,28 +185,28 @@ export default function AdminDashboard() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setUploading(true);
-    
+
     try {
       let imageUrl = formData.image;
-      
+
       // Upload image if a file was selected
       if (imageFile) {
         const formDataToSend = new FormData();
         formDataToSend.append('image', imageFile);
-        
+
         const uploadResponse = await fetch('/api/admin/upload', {
           method: 'POST',
           body: formDataToSend,
         });
-        
+
         if (!uploadResponse.ok) {
           throw new Error('Failed to upload image');
         }
-        
+
         const uploadResult = await uploadResponse.json();
         imageUrl = uploadResult.url;
       }
-      
+
       const productData = {
         name: formData.name,
         description: formData.description,
@@ -216,7 +216,7 @@ export default function AdminDashboard() {
         featured: formData.featured,
         bestseller: formData.bestseller
       };
-      
+
       if (editingProduct) {
         // Update existing product
         const response = await fetch(`/api/admin/products/${editingProduct.id}`, {
@@ -227,11 +227,11 @@ export default function AdminDashboard() {
           credentials: 'include',
           body: JSON.stringify(productData),
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to update product');
         }
-        
+
         setMessage('Product updated successfully!');
       } else {
         // Add new product
@@ -243,19 +243,19 @@ export default function AdminDashboard() {
           credentials: 'include',
           body: JSON.stringify(productData),
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to add product');
         }
-        
+
         setMessage('Product added successfully!');
       }
-      
+
       // Refresh products list
       fetchProducts();
       resetForm();
       setEditingProduct(null);
-      
+
     } catch (error) {
       console.error('Error:', error);
       setMessage('Error: ' + (error as Error).message);
@@ -295,7 +295,7 @@ export default function AdminDashboard() {
 
   const handleDelete = async (productId: string) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
-    
+
     try {
       const response = await fetch(`/api/admin/products/${productId}`, {
         method: 'DELETE',
@@ -318,21 +318,21 @@ export default function AdminDashboard() {
   const handleImageUpload = async (file: File) => {
     try {
       setUploading(true);
-      
+
       const formData = new FormData();
       formData.append('image', file);
-      
+
       const response = await fetch('/api/admin/upload', {
         method: 'POST',
         credentials: 'include',
         body: formData,
       });
-      
+
       if (response.ok) {
         const data = await response.json();
-        setFormData(prev => ({ 
-          ...prev, 
-          image: prev.image && prev.image.trim().length > 0 ? `${prev.image}, ${data.url}` : data.url 
+        setFormData(prev => ({
+          ...prev,
+          image: prev.image && prev.image.trim().length > 0 ? `${prev.image}, ${data.url}` : data.url
         }));
         setImagePreview(data.url);
         setImageFile(null);
@@ -410,24 +410,24 @@ export default function AdminDashboard() {
       <main className="pt-20 pb-20">
         <div className="container mx-auto px-4">
           {/* Navigation */}
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-4xl font-light text-[#7C805A] font-elegant">Admin Dashboard</h1>
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <h1 className="text-3xl sm:text-4xl font-light text-[#7C805A] font-elegant">Admin Dashboard</h1>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
               <button
                 onClick={() => router.push('/x7k9m2p/dashboard')}
-                className="px-4 py-2 bg-[#7C805A] text-[#F5E6D3] rounded-lg font-light"
+                className="px-4 py-2 bg-[#7C805A] text-[#F5E6D3] rounded-lg font-light text-center"
               >
                 Products
               </button>
               <button
                 onClick={() => router.push('/x7k9m2p/orders')}
-                className="px-4 py-2 bg-white/20 text-[#7C805A] border border-white/30 rounded-lg font-light hover:bg-white/30 transition-colors"
+                className="px-4 py-2 bg-white/20 text-[#7C805A] border border-white/30 rounded-lg font-light hover:bg-white/30 transition-colors text-center"
               >
                 Orders
               </button>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-red-600/20 text-red-600 border border-red-500/30 rounded-lg font-light hover:bg-red-600/30 transition-colors"
+                className="px-4 py-2 bg-red-600/20 text-red-600 border border-red-500/30 rounded-lg font-light hover:bg-red-600/30 transition-colors text-center"
               >
                 Logout
               </button>
@@ -442,46 +442,46 @@ export default function AdminDashboard() {
           )}
 
           {/* Countdown Control Section */}
-          <div className="mb-8 bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl p-6 shadow-2xl shadow-black/20">
-            <h2 className="text-2xl font-light text-[#7C805A] mb-6 font-elegant">Countdown Timer Control</h2>
-            
+          <div className="mb-8 bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl p-4 sm:p-6 shadow-2xl shadow-black/20">
+            <h2 className="text-xl sm:text-2xl font-light text-[#7C805A] mb-4 sm:mb-6 font-elegant">Countdown Timer Control</h2>
+
             {countdownMessage && (
               <div className="mb-4 p-3 bg-white/20 border border-white/30 rounded-lg">
-                <p className="text-[#7C805A] font-light text-center">{countdownMessage}</p>
+                <p className="text-[#7C805A] font-light text-center text-sm sm:text-base">{countdownMessage}</p>
               </div>
             )}
 
-            <form onSubmit={updateCountdown} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form onSubmit={updateCountdown} className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div>
-                <label className="block text-[#7C805A] font-light mb-2">Countdown Title</label>
+                <label className="block text-[#7C805A] font-light mb-2 text-sm sm:text-base">Countdown Title</label>
                 <input
                   type="text"
                   value={countdownData.title}
                   onChange={(e) => setCountdownData({ ...countdownData, title: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent text-sm sm:text-base"
                   placeholder="e.g., Limited Time Offer"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-[#7C805A] font-light mb-2">Target Date</label>
+                <label className="block text-[#7C805A] font-light mb-2 text-sm sm:text-base">Target Date</label>
                 <input
                   type="date"
                   value={countdownData.targetDate}
                   onChange={(e) => setCountdownData({ ...countdownData, targetDate: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent text-sm sm:text-base"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-[#7C805A] font-light mb-2">Target Time</label>
+                <label className="block text-[#7C805A] font-light mb-2 text-sm sm:text-base">Target Time</label>
                 <input
                   type="time"
                   value={countdownData.targetTime}
                   onChange={(e) => setCountdownData({ ...countdownData, targetTime: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent text-sm sm:text-base"
                   required
                 />
               </div>
@@ -492,16 +492,16 @@ export default function AdminDashboard() {
                     type="checkbox"
                     checked={countdownData.isVisible}
                     onChange={(e) => setCountdownData({ ...countdownData, isVisible: e.target.checked })}
-                    className="mr-3 h-5 w-5 text-[#7C805A] focus:ring-[#7C805A] border-white/40 rounded"
+                    className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5 text-[#7C805A] focus:ring-[#7C805A] border-white/40 rounded"
                   />
-                  <span className="text-[#7C805A] font-light">Show Countdown in Navbar</span>
+                  <span className="text-[#7C805A] font-light text-sm sm:text-base">Show Countdown in Navbar</span>
                 </label>
               </div>
 
               <div className="md:col-span-2">
                 <button
                   type="submit"
-                  className="w-full py-3 px-6 bg-[#7C805A] hover:bg-[#6A7150] text-[#F5E6D3] rounded-xl transition-all duration-200 font-light shadow-lg shadow-black/30"
+                  className="w-full py-2 sm:py-3 px-4 sm:px-6 bg-[#7C805A] hover:bg-[#6A7150] text-[#F5E6D3] rounded-xl transition-all duration-200 font-light shadow-lg shadow-black/30 text-sm sm:text-base"
                 >
                   Update Countdown
                 </button>
@@ -509,10 +509,10 @@ export default function AdminDashboard() {
             </form>
 
             {/* Preview */}
-            <div className="mt-6 p-4 bg-white/10 rounded-lg border border-white/20">
-              <h3 className="text-[#7C805A] font-light mb-3">Preview:</h3>
+            <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-white/10 rounded-lg border border-white/20">
+              <h3 className="text-[#7C805A] font-light mb-2 sm:mb-3 text-sm sm:text-base">Preview:</h3>
               <div className="text-center">
-                <h4 className="text-sm font-light text-[#7C805A] mb-2">{countdownData.title}</h4>
+                <h4 className="text-xs sm:text-sm font-light text-[#7C805A] mb-2">{countdownData.title}</h4>
                 <div className="text-xs text-[#7C805A]/70">
                   Target: {countdownData.targetDate} at {countdownData.targetTime}
                 </div>
@@ -524,25 +524,25 @@ export default function AdminDashboard() {
           </div>
 
           {/* Product Management Buttons */}
-          <div className="mb-6 flex flex-wrap gap-4 items-center">
+          <div className="mb-6 flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4 items-stretch sm:items-center">
             <button
               onClick={() => {
                 setEditingProduct(null);
                 resetForm();
                 setShowModal(true);
               }}
-              className="px-6 py-3 bg-[#7C805A] hover:bg-[#6A7150] text-[#F5E6D3] rounded-xl transition-all duration-200 font-light shadow-lg shadow-black/30"
+              className="px-4 sm:px-6 py-3 bg-[#7C805A] hover:bg-[#6A7150] text-[#F5E6D3] rounded-xl transition-all duration-200 font-light shadow-lg shadow-black/30 text-center text-sm sm:text-base"
             >
               Add New Product
             </button>
-            
+
             <button
               onClick={exportProducts}
-              className="px-6 py-3 bg-[#6A7150] hover:bg-[#5A6140] text-[#F5E6D3] rounded-xl transition-all duration-200 font-light shadow-lg shadow-black/30"
+              className="px-4 sm:px-6 py-3 bg-[#6A7150] hover:bg-[#5A6140] text-[#F5E6D3] rounded-xl transition-all duration-200 font-light shadow-lg shadow-black/30 text-center text-sm sm:text-base"
             >
               📤 Export Products
             </button>
-            
+
             <div className="relative">
               <input
                 type="file"
@@ -553,7 +553,7 @@ export default function AdminDashboard() {
               />
               <label
                 htmlFor="import-products"
-                className="px-6 py-3 bg-[#7C805A] hover:bg-[#6A7150] text-[#F5E6D3] rounded-xl transition-all duration-200 font-light shadow-lg shadow-black/30 cursor-pointer inline-block"
+                className="px-4 sm:px-6 py-3 bg-[#7C805A] hover:bg-[#6A7150] text-[#F5E6D3] rounded-xl transition-all duration-200 font-light shadow-lg shadow-black/30 cursor-pointer inline-block w-full text-center text-sm sm:text-base"
               >
                 📥 Import Products
               </label>
@@ -561,9 +561,9 @@ export default function AdminDashboard() {
           </div>
 
           {/* Export/Import Info */}
-          <div className="mb-6 p-4 bg-[#F5E6D3]/20 border border-[#7C805A]/20 rounded-xl">
-            <h3 className="text-lg font-light text-[#7C805A] mb-2 font-elegant">📋 Product Management</h3>
-            <div className="text-sm text-[#7C805A]/80 space-y-1">
+          <div className="mb-6 p-3 sm:p-4 bg-[#F5E6D3]/20 border border-[#7C805A]/20 rounded-xl">
+            <h3 className="text-base sm:text-lg font-light text-[#7C805A] mb-2 font-elegant">📋 Product Management</h3>
+            <div className="text-xs sm:text-sm text-[#7C805A]/80 space-y-1">
               <p><strong>Export:</strong> Downloads all products as a JSON file with images, descriptions, titles, and prices</p>
               <p><strong>Import:</strong> Upload a JSON file to add multiple products at once</p>
               <p><strong>Format:</strong> JSON file should contain an array of products with name, price, category, description, image, featured, and bestseller fields</p>
@@ -571,7 +571,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Products Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {products.length === 0 ? (
               <div className="col-span-full text-center py-8">
                 <p className="text-[#7C805A] text-lg">No products found</p>
@@ -581,20 +581,20 @@ export default function AdminDashboard() {
               products.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl p-6 shadow-2xl shadow-black/20"
+                  className="bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl p-4 sm:p-6 shadow-2xl shadow-black/20"
                 >
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-48 object-cover rounded-lg mb-4"
+                    className="w-full h-40 sm:h-48 object-cover rounded-lg mb-3 sm:mb-4"
                   />
-                  <h3 className="text-xl font-light text-[#7C805A] mb-2">{product.name}</h3>
-                  <p className="text-[#7C805A] opacity-80 mb-3 text-sm">{product.description}</p>
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-2xl font-light text-[#7C805A]">${product.price}</span>
-                    <span className="text-sm text-[#7C805A] opacity-80">{product.category}</span>
+                  <h3 className="text-lg sm:text-xl font-light text-[#7C805A] mb-2">{product.name}</h3>
+                  <p className="text-[#7C805A] opacity-80 mb-3 text-xs sm:text-sm line-clamp-2">{product.description}</p>
+                  <div className="flex justify-between items-center mb-3 sm:mb-4">
+                    <span className="text-xl sm:text-2xl font-light text-[#7C805A]">${product.price}</span>
+                    <span className="text-xs sm:text-sm text-[#7C805A] opacity-80">{product.category}</span>
                   </div>
-                  <div className="flex gap-2 mb-4">
+                  <div className="flex gap-2 mb-3 sm:mb-4">
                     {product.featured && (
                       <span className="px-2 py-1 bg-[#7C805A] text-[#F5E6D3] rounded-full text-xs">
                         Featured
@@ -606,16 +606,16 @@ export default function AdminDashboard() {
                       </span>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={() => handleEdit(product)}
-                      className="flex-1 py-2 px-4 bg-[#7C805A] text-[#F5E6D3] rounded-lg hover:bg-[#6A7150] transition-all duration-200"
+                      className="flex-1 py-2 px-4 bg-[#7C805A] text-[#F5E6D3] rounded-lg hover:bg-[#6A7150] transition-all duration-200 text-sm sm:text-base"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(product.id.toString())}
-                      className="flex-1 py-2 px-4 bg-red-600/20 text-red-600 border border-red-500/30 rounded-lg hover:bg-red-600/30 transition-all duration-200"
+                      className="flex-1 py-2 px-4 bg-red-600/20 text-red-600 border border-red-500/30 rounded-lg hover:bg-red-600/30 transition-all duration-200 text-sm sm:text-base"
                     >
                       Delete
                     </button>
@@ -627,39 +627,39 @@ export default function AdminDashboard() {
 
           {/* Add/Edit Product Modal */}
           {showModal && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-white/95 backdrop-blur-xl border border-white/30 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl shadow-black/30">
-                <h2 className="text-2xl font-light text-[#7C805A] mb-6 font-elegant">
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white/95 backdrop-blur-xl border border-white/30 rounded-2xl p-6 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl shadow-black/30">
+                <h2 className="text-xl sm:text-2xl font-light text-[#7C805A] mb-4 sm:mb-6 font-elegant">
                   {editingProduct ? 'Edit Product' : 'Add Product'}
                 </h2>
-                
-                <form onSubmit={handleSubmit} className="space-y-4">
+
+                <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                   <input
                     type="text"
                     placeholder="Product Name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent text-sm sm:text-base"
                     required
                   />
-                  
+
                   <textarea
                     placeholder="Description"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent h-24 resize-none"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent h-20 sm:h-24 resize-none text-sm sm:text-base"
                     required
                   />
-                  
+
                   <input
                     type="number"
                     placeholder="Price"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent text-sm sm:text-base"
                     required
                   />
-                  
+
                   <div className="mb-4">
                     <label className="block text-[#7C805A] font-light mb-2">Image</label>
                     <div className="space-y-3">
@@ -668,7 +668,7 @@ export default function AdminDashboard() {
                         <div className="flex flex-wrap gap-3">
                           {formData.image.split(',').map((raw, idx) => raw.trim()).filter(Boolean).map((url, idx) => (
                             <div key={idx} className="relative">
-                              <img src={url} alt={`Product ${idx+1}`} className="w-20 h-20 object-cover rounded-lg border border-white/40" />
+                              <img src={url} alt={`Product ${idx + 1}`} className="w-20 h-20 object-cover rounded-lg border border-white/40" />
                               <button
                                 type="button"
                                 onClick={() => {
@@ -688,7 +688,7 @@ export default function AdminDashboard() {
                           ))}
                         </div>
                       )}
-                      
+
                       {/* File Input */}
                       <div className="flex items-center gap-3">
                         <input
@@ -708,7 +708,7 @@ export default function AdminDashboard() {
                           </button>
                         )}
                       </div>
-                      
+
                       {/* Current Image URLs (for reference/editing) */}
                       <div>
                         <label className="block text-[#7C805A] font-light mb-1 text-xs">Image URLs (comma-separated)</label>
@@ -722,7 +722,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <input
                     type="text"
                     placeholder="Category"
@@ -731,7 +731,7 @@ export default function AdminDashboard() {
                     className="w-full px-4 py-3 rounded-lg bg-white/50 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
                     required
                   />
-                  
+
                   <div className="flex gap-4 mb-4">
                     <label className="flex items-center">
                       <input
@@ -743,7 +743,7 @@ export default function AdminDashboard() {
                       />
                       <span className="text-sm text-gray-700">Featured</span>
                     </label>
-                    
+
                     <label className="flex items-center">
                       <input
                         type="checkbox"
@@ -755,7 +755,7 @@ export default function AdminDashboard() {
                       <span className="text-sm text-gray-700">Bestseller</span>
                     </label>
                   </div>
-                  
+
                   <div className="flex gap-4 pt-4">
                     <button
                       type="submit"
@@ -763,7 +763,7 @@ export default function AdminDashboard() {
                     >
                       {editingProduct ? 'Update' : 'Add'} Product
                     </button>
-                    
+
                     <button
                       type="button"
                       onClick={() => {

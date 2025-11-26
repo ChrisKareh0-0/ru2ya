@@ -13,14 +13,14 @@ export async function GET() {
   }
 
   try {
-    const products = getProducts();
+    const products = await getProducts();
     const response = NextResponse.json(products);
-    
+
     // Add cache control headers
     response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
-    
+
     return response;
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -44,20 +44,20 @@ export async function POST(request: NextRequest) {
       featured: body.featured || false,
       bestseller: body.bestseller || false
     };
-    
+
     // Validate required fields
     if (!productData.name || !productData.description || !productData.price || !productData.category) {
-      return NextResponse.json({ 
-        error: 'Missing required fields: name, description, price, and category are required' 
+      return NextResponse.json({
+        error: 'Missing required fields: name, description, price, and category are required'
       }, { status: 400 });
     }
 
-    const newProduct = addProduct(productData);
+    const newProduct = await addProduct(productData);
     return NextResponse.json(newProduct, { status: 201 });
   } catch (error) {
     console.error('Error adding product:', error);
-    return NextResponse.json({ 
-      error: error instanceof Error ? error.message : 'Failed to add product' 
+    return NextResponse.json({
+      error: error instanceof Error ? error.message : 'Failed to add product'
     }, { status: 500 });
   }
 }
@@ -69,12 +69,12 @@ export async function PUT(request: NextRequest) {
 
   try {
     const { id, ...updates } = await request.json();
-    
+
     if (!id) {
       return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
     }
 
-    const updatedProduct = updateProduct(id, updates);
+    const updatedProduct = await updateProduct(id, updates);
     if (!updatedProduct) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
@@ -93,12 +93,12 @@ export async function DELETE(request: NextRequest) {
 
   try {
     const { id } = await request.json();
-    
+
     if (!id) {
       return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
     }
 
-    const success = deleteProduct(id);
+    const success = await deleteProduct(id);
     if (!success) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }

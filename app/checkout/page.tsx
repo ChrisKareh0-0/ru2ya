@@ -46,12 +46,20 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
-      // Create order data
+      // Create order data in the format the API expects
       const orderData = {
-        customerInfo: formData,
-        items: cartItems,
+        customerName: `${formData.firstName} ${formData.lastName}`,
+        customerEmail: formData.email,
+        customerPhone: formData.phone,
+        customerAddress: `${formData.address}, ${formData.city}, ${formData.postalCode}, ${formData.country}`,
+        items: cartItems.map(item => ({
+          productId: item.product.id.toString(),
+          productName: item.product.name,
+          quantity: item.quantity,
+          price: item.product.price
+        })),
         totalAmount: totalPrice
       };
 
@@ -68,7 +76,7 @@ export default function CheckoutPage() {
         // Clear cart
         const cartManager = new CartManager();
         cartManager.clear();
-        
+
         setOrderPlaced(true);
       } else {
         const errorData = await response.json();
@@ -93,7 +101,7 @@ export default function CheckoutPage() {
   if (orderPlaced) {
     return (
       <div className="min-h-screen bg-white">
-        <Header cartItems={[]} onCartToggle={() => {}} />
+        <Header cartItems={[]} onCartToggle={() => { }} />
         <main className="pt-20 pb-20">
           <div className="container mx-auto px-4 text-center">
             <div className="max-w-2xl mx-auto">
@@ -134,14 +142,14 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header cartItems={cartItems} onCartToggle={() => {}} />
-      
+      <Header cartItems={cartItems} onCartToggle={() => { }} />
+
       <main className="pt-20 pb-20">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-light text-center text-[#7C805A] mb-12 font-elegant">
             Checkout
           </h1>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Order Summary */}
             <div className="lg:order-2">
@@ -178,7 +186,7 @@ export default function CheckoutPage() {
             <div className="lg:order-1">
               <form onSubmit={handleSubmit} className="bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl p-6 shadow-2xl shadow-black/20">
                 <h3 className="text-2xl font-light text-[#7C805A] mb-6 font-elegant">Shipping Information</h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="block text-[#7C805A] font-light mb-2">First Name</label>

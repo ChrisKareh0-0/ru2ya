@@ -21,25 +21,27 @@
     "remove-demo": "node scripts/remove-demo-products.js",
     "reset-products": "node scripts/reset-products.js",
     "test-export": "node scripts/test-json-export.js",
-    "migrate-schema": "node scripts/migrate-schema.js"
+    "migrate-schema": "node scripts/migrate-schema.js",
+    "migrate-to-mongodb": "node scripts/migrate-to-mongodb.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.55.0",
     "@types/uuid": "^10.0.0",
-    "better-sqlite3": "^12.2.0",
     "clsx": "^2.1.1",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.3",
+    "mongoose": "^8.8.4",
     "next": "^14.2.0",
+    "nodemailer": "^6.9.16",
     "prom-client": "^15.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
     "tailwind-merge": "^3.3.1",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
+    "@types/nodemailer": "^6.4.16",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.0",

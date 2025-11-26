@@ -13,34 +13,34 @@ export async function GET(request: NextRequest) {
     const listMode = searchParams.get('list') === '1' || searchParams.get('list') === 'true';
     const limit = limitParam ? Math.max(1, Math.min(50, parseInt(limitParam, 10) || 10)) : undefined;
     const offset = offsetParam ? Math.max(0, parseInt(offsetParam, 10) || 0) : undefined;
-    
+
     let products: Product[];
-    
+
     if (featured === 'true') {
-      products = getFeaturedProducts();
+      products = await getFeaturedProducts();
     } else if (bestseller === 'true') {
-      products = getBestsellers();
+      products = await getBestsellers();
     } else if (limit !== undefined && offset !== undefined) {
-      products = getProductsPaginated(limit, offset);
+      products = await getProductsPaginated(limit, offset);
     } else {
-      products = getProducts();
+      products = await getProducts();
     }
-    
+
     // In list mode, trim image to first URL and omit heavy fields if needed
     const response = NextResponse.json(
       listMode
         ? products.map(p => ({
-            ...p,
-            image: (p.image || '').split(',')[0]?.trim() || ''
-          }))
+          ...p,
+          image: (p.image || '').split(',')[0]?.trim() || ''
+        }))
         : products
     );
-    
+
     // Add cache control headers
     response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
-    
+
     return response;
   } catch (error) {
     console.error('❌ Error fetching products:', error);

@@ -1,39 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { getCountdown, updateCountdown } from '@/lib/countdown';
 
-const COUNTDOWN_FILE = join(process.cwd(), 'data', 'countdown.json');
-
-// Ensure data directory exists
-const ensureDataDir = () => {
-  const dataDir = join(process.cwd(), 'data');
-  if (!existsSync(dataDir)) {
-    const fs = require('fs');
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-};
+export const dynamic = 'force-dynamic';
 
 // Get countdown data
 export async function GET() {
   try {
-    ensureDataDir();
-    
-    if (!existsSync(COUNTDOWN_FILE)) {
-      // Return default countdown data if file doesn't exist
-      const defaultData = {
+    const data = await getCountdown();
+
+    if (!data) {
+      // Return default if no data found
+      return NextResponse.json({
         title: 'Limited Time Offer',
         targetDate: '2024-12-31',
         targetTime: '23:59',
         isVisible: true
-      };
-      
-      // Save default data
-      writeFileSync(COUNTDOWN_FILE, JSON.stringify(defaultData, null, 2));
-      return NextResponse.json(defaultData);
+      });
     }
 
-    const data = readFileSync(COUNTDOWN_FILE, 'utf-8');
-    return NextResponse.json(JSON.parse(data));
+    return NextResponse.json(data);
   } catch (error) {
     console.error('Error reading countdown data:', error);
     return NextResponse.json(
@@ -46,8 +31,6 @@ export async function GET() {
 // Update countdown data
 export async function POST(request: NextRequest) {
   try {
-    ensureDataDir();
-    
     const body = await request.json();
     const { title, targetDate, targetTime, isVisible } = body;
 
@@ -77,19 +60,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const countdownData = {
+    const updated = await updateCountdown({
       title,
       targetDate,
       targetTime,
       isVisible
-    };
+    });
 
-    // Save to file
-    writeFileSync(COUNTDOWN_FILE, JSON.stringify(countdownData, null, 2));
+    if (!updated) {
+      return NextResponse.json(
+        { error: 'Failed to save countdown data' },
+        { status: 500 }
+      );
+    }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Countdown updated successfully',
-      data: countdownData 
+      data: updated
     });
   } catch (error) {
     console.error('Error updating countdown data:', error);

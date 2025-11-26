@@ -21,7 +21,7 @@ export async function GET(
       return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
     }
 
-    const product = getProductById(parseInt(id));
+    const product = await getProductById(parseInt(id));
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
@@ -44,12 +44,12 @@ export async function PUT(
   try {
     const { id } = params;
     const updates = await request.json();
-    
+
     if (!id) {
       return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
     }
 
-    const updatedProduct = updateProduct(parseInt(id), updates);
+    const updatedProduct = await updateProduct(parseInt(id), updates);
     if (!updatedProduct) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
@@ -71,12 +71,12 @@ export async function DELETE(
 
   try {
     const { id } = params;
-    
+
     if (!id) {
       return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
     }
 
-    const success = deleteProduct(parseInt(id));
+    const success = await deleteProduct(parseInt(id));
     if (!success) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }

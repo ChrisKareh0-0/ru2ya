@@ -24,6 +24,8 @@ services:
         value: memory
       - key: SQLITE_MMAP_SIZE
         value: 67108864
+      - key: MONGODB_URI
+        sync: false
     healthCheckPath: /
     autoDeploy: true
     branch: master

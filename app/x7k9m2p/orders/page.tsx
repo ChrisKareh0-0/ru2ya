@@ -72,7 +72,7 @@ export default function OrdersPage() {
 
       if (response.ok) {
         // Update local state
-        setOrders(prev => prev.map(order => 
+        setOrders(prev => prev.map(order =>
           order.id === orderId ? { ...order, status: newStatus } : order
         ));
       } else {
@@ -116,27 +116,27 @@ export default function OrdersPage() {
     <div className="min-h-screen bg-white">
       <main className="pt-20 pb-20">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
               <button
                 onClick={() => router.push('/x7k9m2p/dashboard')}
-                className="px-4 py-2 bg-white/20 text-[#7C805A] border border-white/30 rounded-lg hover:bg-white/30 transition-colors font-light flex items-center gap-2"
+                className="px-4 py-2 bg-white/20 text-[#7C805A] border border-white/30 rounded-lg hover:bg-white/30 transition-colors font-light flex items-center justify-center gap-2 text-sm sm:text-base"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
                 Back to Dashboard
               </button>
-              <h1 className="text-4xl font-light text-[#7C805A] font-elegant">Orders Management</h1>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-light text-[#7C805A] font-elegant text-center sm:text-left">Orders Management</h1>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
               <button
                 onClick={fetchOrders}
-                className="px-4 py-2 bg-[#7C805A] text-[#F5E6D3] rounded-lg font-light hover:bg-[#6A7150] transition-colors"
+                className="px-4 py-2 bg-[#7C805A] text-[#F5E6D3] rounded-lg font-light hover:bg-[#6A7150] transition-colors text-sm sm:text-base text-center"
               >
                 Refresh Orders
               </button>
-              <div className="text-sm text-[#7C805A] font-light">
+              <div className="text-sm text-[#7C805A] font-light text-center sm:text-left">
                 Total Orders: {orders.length}
               </div>
             </div>
@@ -158,7 +158,7 @@ export default function OrdersPage() {
                       })}
                     </p>
                   </div>
-                  
+
                   <div className="flex items-center gap-4">
                     <span className={`px-3 py-1 rounded-full text-white text-sm font-light ${getStatusColor(order.status)}`}>
                       {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
@@ -215,11 +215,10 @@ export default function OrdersPage() {
                       <button
                         key={status}
                         onClick={() => updateOrderStatus(order.id, status)}
-                        className={`px-3 py-1 rounded-lg text-sm font-light transition-all duration-200 ${
-                          order.status === status
+                        className={`px-3 py-1 rounded-lg text-sm font-light transition-all duration-200 ${order.status === status
                             ? 'bg-[#7C805A] text-[#F5E6D3]'
                             : 'bg-white/20 text-[#7C805A] hover:bg-white/30'
-                        }`}
+                          }`}
                       >
                         {status.charAt(0).toUpperCase() + status.slice(1)}
                       </button>

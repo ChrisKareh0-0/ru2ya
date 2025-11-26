@@ -4,13 +4,13 @@
 const nextConfig = {
   swcMinify: true,
   // output: 'standalone', // Temporarily disabled due to build issues
-  
+
   // Reduce memory usage during build and runtime
   experimental: {
     // Reduce memory usage during build
     workerThreads: false,
   },
-  
+
   // Optimize images to reduce memory usage
   images: {
     // Reduce image optimization memory
@@ -32,15 +32,9 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'fcmkzwcemtlnudsmtkdt.supabase.co',
-        port: '',
-        pathname: '/**',
-      },
     ],
   },
-  
+
   // Reduce memory usage during build
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
@@ -68,23 +62,23 @@ const nextConfig = {
         },
       };
     }
-    
+
     return config;
   },
-  
+
   // Reduce memory usage during development
   onDemandEntries: {
     // Reduce memory usage for page entries
     maxInactiveAge: 25 * 1000,
     pagesBufferLength: 2,
   },
-  
+
   // Compress static assets to reduce memory
   compress: true,
-  
+
   // Reduce memory usage for static generation
   generateEtags: false,
-  
+
   // Optimize for low-memory environments
   poweredByHeader: false,
 };

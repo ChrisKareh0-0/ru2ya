@@ -14,7 +14,7 @@ export interface Product {
     updatedAt: string;
 }
 
-function toProduct(doc: IProduct): Product {
+function toProduct(doc: any): Product {
     return {
         id: doc._id?.toString() || doc.id || '',
         name: doc.name,

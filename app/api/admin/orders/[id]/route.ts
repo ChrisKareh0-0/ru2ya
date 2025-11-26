@@ -31,7 +31,7 @@ export async function GET(
         if (format === 'pdf') {
             const pdfBuffer = generateSingleOrderPDF(order);
 
-            return new NextResponse(pdfBuffer, {
+            return new NextResponse(pdfBuffer as any, {
                 status: 200,
                 headers: {
                     'Content-Type': 'application/pdf',

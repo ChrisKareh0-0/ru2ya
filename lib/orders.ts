@@ -21,7 +21,7 @@ export interface Order {
     updatedAt?: string;
 }
 
-function toOrder(doc: IOrder): Order {
+function toOrder(doc: any): Order {
     return {
         id: doc._id?.toString() || doc.id || '',
         customerName: doc.customerName,
@@ -68,4 +68,4 @@ export async function deleteOrder(id: string): Promise<boolean> {
     return !!result;
 }
 
-export type { Order, OrderItem };
+

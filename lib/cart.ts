@@ -39,22 +39,22 @@ export class CartManager {
 
   addItem(product: Product, quantity: number = 1): void {
     const existingItem = this.items.find(item => item.product.id === product.id);
-    
+
     if (existingItem) {
       existingItem.quantity += quantity;
     } else {
       this.items.push({ product, quantity });
     }
-    
+
     this.saveToStorage();
   }
 
-  removeItem(productId: number): void {
+  removeItem(productId: string | number): void {
     this.items = this.items.filter(item => item.product.id !== productId);
     this.saveToStorage();
   }
 
-  updateQuantity(productId: number, quantity: number): void {
+  updateQuantity(productId: string | number, quantity: number): void {
     const item = this.items.find(item => item.product.id === productId);
     if (item) {
       if (quantity <= 0) {

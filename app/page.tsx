@@ -23,7 +23,7 @@ export default function HomePage() {
     featured: false,
     bestsellers: false
   });
-  
+
   const router = useRouter();
   const galleryRef = useRef<HTMLElement>(null);
   const featuredRef = useRef<HTMLElement>(null);
@@ -34,9 +34,9 @@ export default function HomePage() {
     const timer = setTimeout(() => {
       setAnimateLogo(true);
     }, 300);
-    
+
     setCartItems(cartManager.getItems());
-    
+
     return () => clearTimeout(timer);
   }, [cartManager]);
 
@@ -52,7 +52,7 @@ export default function HomePage() {
   // Intersection Observer for scroll animations
   useEffect(() => {
     console.log('🔧 Setting up intersection observer...');
-    
+
     // Add a small delay to ensure refs are properly set
     const timer = setTimeout(() => {
       const observerOptions = {
@@ -115,7 +115,7 @@ export default function HomePage() {
       if (galleryRef.current) {
         const rect = galleryRef.current.getBoundingClientRect();
         const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-        
+
         if (isVisible && !animateSections.gallery) {
           console.log('📜 Scroll detected gallery section, triggering animation');
           setAnimateSections(prev => ({
@@ -135,7 +135,7 @@ export default function HomePage() {
     if (galleryRef.current) {
       const rect = galleryRef.current.getBoundingClientRect();
       const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-      
+
       if (isVisible && !animateSections.gallery) {
         console.log('🚀 Gallery section already visible on mount, triggering animation');
         setAnimateSections(prev => ({
@@ -155,7 +155,7 @@ export default function HomePage() {
     const fetchData = async () => {
       try {
         console.log('🔄 Fetching homepage data...');
-        
+
         // Fetch featured products
         const featuredResponse = await fetch('/api/products?featured=true', {
           cache: 'no-store',
@@ -197,12 +197,14 @@ export default function HomePage() {
     setCartItems(cartManager.getItems());
   };
 
-  const handleUpdateQuantity = (productId: number, quantity: number) => {
+  const handleUpdateQuantity = (productId: string | number, quantity: number) => {
+    const cartManager = new CartManager();
     cartManager.updateQuantity(productId, quantity);
     setCartItems(cartManager.getItems());
   };
 
-  const handleRemoveItem = (productId: number) => {
+  const handleRemoveItem = (productId: string | number) => {
+    const cartManager = new CartManager();
     cartManager.removeItem(productId);
     setCartItems(cartManager.getItems());
   };
@@ -236,9 +238,8 @@ export default function HomePage() {
 
       <main>
         {/* Hero Section */}
-        <section className={`relative py-32 sm:py-40 md:py-60 px-4 min-h-[70vh] sm:min-h-[75vh] md:min-h-[65vh] overflow-hidden transition-all duration-1000 ${
-          animateLogo ? 'opacity-100' : 'opacity-0'
-        }`}>
+        <section className={`relative py-32 sm:py-40 md:py-60 px-4 min-h-[70vh] sm:min-h-[75vh] md:min-h-[65vh] overflow-hidden transition-all duration-1000 ${animateLogo ? 'opacity-100' : 'opacity-0'
+          }`}>
           {/* Shooting Stars Background - Multiple instances for full width and height coverage */}
           {/* Top row */}
           {/* <ShootingStars leftOffset={-900} topOffset={-200} /> */}
@@ -267,22 +268,20 @@ export default function HomePage() {
 
           <div className="container mx-auto text-center relative z-10">
             <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl font-light mb-8 sm:mb-12 font-elegant drop-shadow-2xl leading-[1.3] overflow-visible md:pb-6">
-              <span style={{height: 'auto'}}
-                className={`inline-block transition-all duration-1000 ease-out hero-title-animation md:-translate-y-5 md:pb-3 ${
-                  animateLogo 
-                    ? 'translate-x-0 opacity-100' 
+              <span style={{ height: 'auto' }}
+                className={`inline-block transition-all duration-1000 ease-out hero-title-animation md:-translate-y-5 md:pb-3 ${animateLogo
+                    ? 'translate-x-0 opacity-100'
                     : '-translate-x-full opacity-0'
-                }`}
+                  }`}
               >
                 ru
               </span>
-              <span 
-                className={`inline-block mx-0 md:mx-0 h-[2.0em] md:h-[1.5em] transition-all duration-1000 delay-700 ease-out hero-title-animation ${
-                  animateLogo 
-                    ? 'opacity-100 scale-100' 
+              <span
+                className={`inline-block mx-0 md:mx-0 h-[2.0em] md:h-[1.5em] transition-all duration-1000 delay-700 ease-out hero-title-animation ${animateLogo
+                    ? 'opacity-100 scale-100'
                     : 'opacity-0 scale-75'
-                }`}
-                style={{ 
+                  }`}
+                style={{
                   fontSize: '1.0em',
                   lineHeight: '1',
                   verticalAlign: 'baseline',
@@ -292,26 +291,23 @@ export default function HomePage() {
               >
                 <span className="block transform -translate-y-[0.1rem] xs:-translate-y-[1.7rem] sm:-translate-y-[2.0rem] md:-translate-y-[0.2rem] text-5xl xs:text-6xl sm:text-7xl md:text-6xl leading-none">ء</span>
               </span>
-              <span style={{height: 'auto'}}
-                className={`inline-block transition-all duration-1000 delay-300 ease-out hero-title-animation md:-translate-y-5 md:pb-3 ${
-                  animateLogo 
-                    ? 'translate-x-0 opacity-100' 
+              <span style={{ height: 'auto' }}
+                className={`inline-block transition-all duration-1000 delay-300 ease-out hero-title-animation md:-translate-y-5 md:pb-3 ${animateLogo
+                    ? 'translate-x-0 opacity-100'
                     : 'translate-x-full opacity-0'
-                }`}
+                  }`}
               >
                 ya
               </span>
             </h1>
-            <p className={`text-lg xs:text-xl sm:text-2xl md:text-3xl text-[#7C805A] max-w-4xl mx-auto font-light drop-shadow-lg mb-10 sm:mb-16 px-2 transition-all duration-1000 delay-1000 ${
-              animateLogo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}>
+            <p className={`text-lg xs:text-xl sm:text-2xl md:text-3xl text-[#7C805A] max-w-4xl mx-auto font-light drop-shadow-lg mb-10 sm:mb-16 px-2 transition-all duration-1000 delay-1000 ${animateLogo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              }`}>
               A Dream. A Vision. A Way Of Seeing The World.
             </p>
             <button
               onClick={() => router.push('/products')}
-              className={`px-6 xs:px-8 sm:px-10 md:px-12 py-2.5 xs:py-3 md:py-4 bg-gradient-to-r from-[#7C805A] to-[#6A7150] hover:from-[#6A7150] hover:to-[#5A6140] text-white text-base xs:text-lg md:text-xl font-light rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-xl shadow-black/30 hover:shadow-black/40 focus-visible:outline-2 focus-visible:outline-[#7C805A] focus-visible:outline-offset-2 ${
-                animateLogo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-              }`}
+              className={`px-6 xs:px-8 sm:px-10 md:px-12 py-2.5 xs:py-3 md:py-4 bg-gradient-to-r from-[#7C805A] to-[#6A7150] hover:from-[#6A7150] hover:to-[#5A6140] text-white text-base xs:text-lg md:text-xl font-light rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-xl shadow-black/30 hover:shadow-black/40 focus-visible:outline-2 focus-visible:outline-[#7C805A] focus-visible:outline-offset-2 ${animateLogo ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
               style={{ transitionDelay: '1200ms' }}
             >
               Shop Now
@@ -320,12 +316,11 @@ export default function HomePage() {
         </section>
 
         {/* Gallery Collage Section - Simple Grid Layout */}
-        <section 
-          ref={galleryRef} 
-          data-section="gallery" 
-          className={`py-8 sm:py-12 md:py-20 px-4 relative mt-16 sm:mt-20 md:mt-40 transition-all duration-1000 overflow-hidden ${
-            animateSections.gallery ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
-          }`}
+        <section
+          ref={galleryRef}
+          data-section="gallery"
+          className={`py-8 sm:py-12 md:py-20 px-4 relative mt-16 sm:mt-20 md:mt-40 transition-all duration-1000 overflow-hidden ${animateSections.gallery ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
+            }`}
         >
           <div className="container mx-auto">
             <div className="text-center mb-8 sm:mb-12 md:mb-16">
@@ -336,14 +331,13 @@ export default function HomePage() {
                 Experience the artistry and craftsmanship behind every piece
               </p>
             </div>
-            
+
             {/* Main Gallery Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
               {/* Large Left Image */}
-              <div 
-                className={`sm:col-span-2 lg:col-span-8 h-[250px] xs:h-[280px] sm:h-[300px] md:h-[400px] lg:h-[500px] transition-all duration-1000 delay-200 animate-optimized ${
-                  animateSections.gallery ? 'translate-x-0' : '-translate-x-full'
-                }`}
+              <div
+                className={`sm:col-span-2 lg:col-span-8 h-[250px] xs:h-[280px] sm:h-[300px] md:h-[400px] lg:h-[500px] transition-all duration-1000 delay-200 animate-optimized ${animateSections.gallery ? 'translate-x-0' : '-translate-x-full'
+                  }`}
                 style={{
                   transform: animateSections.gallery ? 'translateX(0)' : 'translateX(-100%)'
                 }}
@@ -359,14 +353,13 @@ export default function HomePage() {
                   />
                 </div>
               </div>
-              
+
               {/* Right Column - Two Stacked Images */}
               <div className="sm:col-span-2 lg:col-span-4 space-y-3 sm:space-y-4 md:space-y-6">
                 {/* Top Right Image */}
-                <div 
-                  className={`h-[150px] xs:h-[160px] sm:h-[140px] md:h-[200px] lg:h-[240px] transition-all duration-1000 delay-400 animate-optimized ${
-                    animateSections.gallery ? 'translate-x-0' : 'translate-x-full'
-                  }`}
+                <div
+                  className={`h-[150px] xs:h-[160px] sm:h-[140px] md:h-[200px] lg:h-[240px] transition-all duration-1000 delay-400 animate-optimized ${animateSections.gallery ? 'translate-x-0' : 'translate-x-full'
+                    }`}
                   style={{
                     transform: animateSections.gallery ? 'translateX(0)' : 'translateX(100%)'
                   }}
@@ -383,12 +376,11 @@ export default function HomePage() {
                     />
                   </div>
                 </div>
-                
+
                 {/* Bottom Right Image */}
-                <div 
-                  className={`h-[150px] xs:h-[160px] sm:h-[140px] md:h-[200px] lg:h-[240px] transition-all duration-1000 delay-600 animate-optimized ${
-                    animateSections.gallery ? 'translate-x-0' : 'translate-x-full'
-                  }`}
+                <div
+                  className={`h-[150px] xs:h-[160px] sm:h-[140px] md:h-[200px] lg:h-[240px] transition-all duration-1000 delay-600 animate-optimized ${animateSections.gallery ? 'translate-x-0' : 'translate-x-full'
+                    }`}
                   style={{
                     transform: animateSections.gallery ? 'translateX(0)' : 'translateX(100%)'
                   }}
@@ -406,13 +398,12 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Bottom Row - Two Medium Images */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
-              <div 
-                className={`h-[200px] xs:h-[220px] sm:h-[250px] md:h-[300px] lg:h-[350px] transition-all duration-1000 delay-800 animate-optimized ${
-                  animateSections.gallery ? 'translate-x-0' : '-translate-x-full'
-                }`}
+              <div
+                className={`h-[200px] xs:h-[220px] sm:h-[250px] md:h-[300px] lg:h-[350px] transition-all duration-1000 delay-800 animate-optimized ${animateSections.gallery ? 'translate-x-0' : '-translate-x-full'
+                  }`}
                 style={{
                   transform: animateSections.gallery ? 'translateX(0)' : 'translateX(-100%)'
                 }}
@@ -429,11 +420,10 @@ export default function HomePage() {
                   />
                 </div>
               </div>
-              
-              <div 
-                className={`h-[200px] xs:h-[220px] sm:h-[250px] md:h-[300px] lg:h-[350px] transition-all duration-1000 delay-1000 animate-optimized ${
-                  animateSections.gallery ? 'translate-x-0' : 'translate-x-full'
-                }`}
+
+              <div
+                className={`h-[200px] xs:h-[220px] sm:h-[250px] md:h-[300px] lg:h-[350px] transition-all duration-1000 delay-1000 animate-optimized ${animateSections.gallery ? 'translate-x-0' : 'translate-x-full'
+                  }`}
                 style={{
                   transform: animateSections.gallery ? 'translateX(0)' : 'translateX(100%)'
                 }}
@@ -454,12 +444,11 @@ export default function HomePage() {
         </section>
 
         {/* Bestsellers Section */}
-        <section 
-          ref={bestsellersRef} 
-          data-section="bestsellers" 
-          className={`py-8 sm:py-12 md:py-20 px-4 transition-all duration-1000 ${
-            animateSections.bestsellers ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
-          }`}
+        <section
+          ref={bestsellersRef}
+          data-section="bestsellers"
+          className={`py-8 sm:py-12 md:py-20 px-4 transition-all duration-1000 ${animateSections.bestsellers ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
+            }`}
         >
           <div className="container mx-auto">
             <div className="text-center mb-8 sm:mb-12 md:mb-16">
@@ -470,16 +459,15 @@ export default function HomePage() {
                 Our most loved pieces by customers worldwide
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
               {bestsellers.map((product, index) => (
                 <div
                   key={product.id}
-                  className={`transition-all duration-700 animate-optimized hover-lift ${
-                    animateSections.bestsellers 
-                      ? 'opacity-100 translate-y-0' 
+                  className={`transition-all duration-700 animate-optimized hover-lift ${animateSections.bestsellers
+                      ? 'opacity-100 translate-y-0'
                       : 'opacity-100 translate-y-0'
-                  }`}
+                    }`}
                   style={{ transitionDelay: `${index * 150}ms` }}
                 >
                   <ProductCard
@@ -493,12 +481,11 @@ export default function HomePage() {
         </section>
 
         {/* Featured Products Section */}
-        <section 
-          ref={featuredRef} 
-          data-section="featured" 
-          className={`py-8 sm:py-12 md:py-20 px-4 bg-gradient-to-br from-white to-[#F5E6D3]/30 transition-all duration-1000 ${
-            animateSections.featured ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
-          }`}
+        <section
+          ref={featuredRef}
+          data-section="featured"
+          className={`py-8 sm:py-12 md:py-20 px-4 bg-gradient-to-br from-white to-[#F5E6D3]/30 transition-all duration-1000 ${animateSections.featured ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0'
+            }`}
         >
           <div className="container mx-auto">
             <div className="text-center mb-8 sm:mb-12 md:mb-16">
@@ -509,16 +496,15 @@ export default function HomePage() {
                 Handpicked selections that define our signature style
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
               {featuredProducts.map((product, index) => (
                 <div
                   key={product.id}
-                  className={`transition-all duration-700 animate-optimized hover-lift ${
-                    animateSections.featured 
-                      ? 'opacity-100 translate-y-0' 
+                  className={`transition-all duration-700 animate-optimized hover-lift ${animateSections.featured
+                      ? 'opacity-100 translate-y-0'
                       : 'opacity-100 translate-y-0'
-                  }`}
+                    }`}
                   style={{ transitionDelay: `${index * 150}ms` }}
                 >
                   <ProductCard
@@ -531,7 +517,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        
+
       </main>
 
       <Footer />

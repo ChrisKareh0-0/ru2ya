@@ -10,22 +10,22 @@ interface CartProps {
   isOpen: boolean;
   onClose: () => void;
   items: CartItem[];
-  onUpdateQuantity: (productId: number, quantity: number) => void;
-  onRemoveItem: (productId: number) => void;
+  onUpdateQuantity: (productId: string | number, quantity: number) => void;
+  onRemoveItem: (productId: string | number) => void;
   onClearCart: () => void;
 }
 
-export default function Cart({ 
-  isOpen, 
-  onClose, 
-  items, 
-  onUpdateQuantity, 
+export default function Cart({
+  isOpen,
+  onClose,
+  items,
+  onUpdateQuantity,
   onRemoveItem,
-  onClearCart 
+  onClearCart
 }: CartProps) {
   const router = useRouter();
   const [isAnimating, setIsAnimating] = useState(false);
-  
+
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
@@ -46,16 +46,15 @@ export default function Cart({
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Backdrop with fade-in animation */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-out"
-        onClick={onClose} 
+        onClick={onClose}
       />
-      
+
       {/* Cart panel with slide-in animation */}
-      <div 
-        className={`absolute right-0 top-0 h-full w-full max-w-md transform transition-transform duration-300 ease-out ${
-          isAnimating ? 'translate-x-0' : 'translate-x-full'
-        }`}
+      <div
+        className={`absolute right-0 top-0 h-full w-full max-w-md transform transition-transform duration-300 ease-out ${isAnimating ? 'translate-x-0' : 'translate-x-full'
+          }`}
       >
         <div className="h-full backdrop-blur-xl bg-white/20 border-l border-white/30 shadow-3xl shadow-black/40">
           <div className="flex items-center justify-between p-6 border-b border-white/20">
@@ -105,7 +104,7 @@ export default function Cart({
                   <div
                     key={item.product.id}
                     className="backdrop-blur-xl bg-white/20 border border-white/30 rounded-xl p-4 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 transition-all duration-200"
-                    style={{ 
+                    style={{
                       animationDelay: `${index * 100}ms`,
                       animation: `slideInRight 0.5s ease-out ${index * 100}ms both`
                     }}
@@ -125,7 +124,7 @@ export default function Cart({
                       <div className="flex-1">
                         <h3 className="text-white font-light mb-1 drop-shadow-sm">{item.product.name}</h3>
                         <p className="text-white text-sm mb-2 font-light drop-shadow-sm">${item.product.price}</p>
-                        
+
                         <div className="flex items-center gap-3">
                           <div className="flex items-center bg-white/20 border border-white/30 rounded-lg shadow-md shadow-black/20">
                             <button
@@ -148,7 +147,7 @@ export default function Cart({
                               </svg>
                             </button>
                           </div>
-                          
+
                           <button
                             onClick={() => onRemoveItem(item.product.id)}
                             className="p-1 text-red-300 hover:text-red-200 transition-colors drop-shadow-sm"
@@ -159,7 +158,7 @@ export default function Cart({
                           </button>
                         </div>
                       </div>
-                      
+
                       <div className="text-right">
                         <p className="text-white font-semibold">
                           ${(item.product.price * item.quantity).toFixed(2)}
@@ -180,15 +179,15 @@ export default function Cart({
                   ${totalPrice.toFixed(2)}
                 </span>
               </div>
-              
+
               <div className="space-y-3">
-                <button 
+                <button
                   onClick={handleCheckout}
                   className="w-full py-3 px-4 bg-[#7C805A] hover:bg-[#6A7150] text-white font-medium rounded-xl transition-all duration-200 transform hover:shadow-lg shadow-lg shadow-black/30"
                 >
                   Checkout
                 </button>
-                
+
                 <button
                   onClick={onClearCart}
                   className="w-full py-3 px-4 bg-red-600/20 text-white border border-red-500/30 rounded-xl hover:bg-red-600/30 transition-all duration-200"

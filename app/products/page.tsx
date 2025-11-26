@@ -53,13 +53,13 @@ function ProductsContent({
   // Handle category change from filter dropdown
   const handleCategoryFilterChange = useCallback((newCategory: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    
+
     if (newCategory === 'all') {
       params.delete('category');
     } else {
       params.set('category', newCategory);
     }
-    
+
     const query = params.toString();
     router.push(`/products${query ? `?${query}` : ''}`);
   }, [searchParams, router]);
@@ -68,7 +68,7 @@ function ProductsContent({
     try {
       console.log('🔍 Fetching products from /api/products...');
       const offset = (page - 1) * PAGE_SIZE;
-      const response = await fetch(`/api/products?limit=${PAGE_SIZE}&offset=${offset}&list=1` , { 
+      const response = await fetch(`/api/products?limit=${PAGE_SIZE}&offset=${offset}&list=1`, {
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache'
@@ -92,10 +92,10 @@ function ProductsContent({
     console.log('💰 Price range:', priceRange);
     console.log('⭐ Show featured only:', showFeaturedOnly);
     console.log('🔥 Show bestsellers only:', showBestsellersOnly);
-    
+
     let filtered = products.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           product.description.toLowerCase().includes(searchTerm.toLowerCase());
+        product.description.toLowerCase().includes(searchTerm.toLowerCase());
       const productCategory = (product.category || '').toLowerCase().trim();
       const selected = (selectedCategory || '').toLowerCase().trim();
       const matchesCategory = selected === 'all' || productCategory === selected;
@@ -118,7 +118,7 @@ function ProductsContent({
             matchesPrice = true;
         }
       }
-      
+
       return matchesSearch && matchesCategory && matchesPrice;
     });
 
@@ -183,12 +183,12 @@ function ProductsContent({
     setCartItems(cartManager.getItems());
   };
 
-  const handleUpdateQuantity = (productId: number, quantity: number) => {
+  const handleUpdateQuantity = (productId: string | number, quantity: number) => {
     cartManager.updateQuantity(productId, quantity);
     setCartItems(cartManager.getItems());
   };
 
-  const handleRemoveItem = (productId: number) => {
+  const handleRemoveItem = (productId: string | number) => {
     cartManager.removeItem(productId);
     setCartItems(cartManager.getItems());
   };
@@ -210,7 +210,7 @@ function ProductsContent({
   // Memory-optimized sorting
   const sortedProducts = useMemo(() => {
     if (!filteredProducts.length) return [];
-    
+
     const sorted = [...filteredProducts];
     switch (sortBy) {
       case 'price-low':
@@ -234,174 +234,174 @@ function ProductsContent({
   }
 
   return (
-      <main className="relative pt-16 xs:pt-18 sm:pt-20">
-        {/* Hero Section */}
-        <section className="py-12 xs:py-14 sm:py-16 px-4">
-          <div className="container mx-auto text-center">
-            <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl font-light mb-4 sm:mb-6 font-elegant drop-shadow-2xl drop-shadow-[#7C805A]/20">
-              <span className="text-[#7C805A]">All Products</span>
-            </h1>
-            <p className="text-base xs:text-lg sm:text-xl text-[#7C805A] max-w-3xl mx-auto font-light drop-shadow-lg mb-6 sm:mb-8 px-2">
-              Explore our complete collection of premium products
-            </p>
-          </div>
-        </section>
+    <main className="relative pt-16 xs:pt-18 sm:pt-20">
+      {/* Hero Section */}
+      <section className="py-12 xs:py-14 sm:py-16 px-4">
+        <div className="container mx-auto text-center">
+          <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl font-light mb-4 sm:mb-6 font-elegant drop-shadow-2xl drop-shadow-[#7C805A]/20">
+            <span className="text-[#7C805A]">All Products</span>
+          </h1>
+          <p className="text-base xs:text-lg sm:text-xl text-[#7C805A] max-w-3xl mx-auto font-light drop-shadow-lg mb-6 sm:mb-8 px-2">
+            Explore our complete collection of premium products
+          </p>
+        </div>
+      </section>
 
-        {/* Search and Filter Section */}
-        <section className="px-4 mb-8 sm:mb-12">
-          <div className="container mx-auto">
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center mb-6 sm:mb-8">
-              {/* Search Bar */}
-              <div className="relative w-full max-w-sm sm:max-w-md">
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-3 xs:px-4 py-2.5 xs:py-3 pl-10 xs:pl-12 text-sm xs:text-base rounded-lg bg-white/80 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent shadow-md sm:shadow-lg"
-                />
-                <svg className="absolute left-3 xs:left-4 top-1/2 transform -translate-y-1/2 w-4 xs:w-5 h-4 xs:h-5 text-[#7C805A]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      {/* Search and Filter Section */}
+      <section className="px-4 mb-8 sm:mb-12">
+        <div className="container mx-auto">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center mb-6 sm:mb-8">
+            {/* Search Bar */}
+            <div className="relative w-full max-w-sm sm:max-w-md">
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-3 xs:px-4 py-2.5 xs:py-3 pl-10 xs:pl-12 text-sm xs:text-base rounded-lg bg-white/80 border border-white/40 text-[#7C805A] placeholder-[#7C805A]/60 font-light focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent shadow-md sm:shadow-lg"
+              />
+              <svg className="absolute left-3 xs:left-4 top-1/2 transform -translate-y-1/2 w-4 xs:w-5 h-4 xs:h-5 text-[#7C805A]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+
+            {/* Filter Button */}
+            <div className="relative">
+              <button
+                onClick={toggleFilters}
+                className="px-4 xs:px-6 py-2.5 xs:py-3 text-sm xs:text-base bg-[#7C805A] text-white rounded-lg hover:bg-[#6A7150] transition-all duration-200 shadow-md sm:shadow-lg flex items-center gap-1.5 xs:gap-2"
+              >
+                <svg className="w-4 xs:w-5 h-4 xs:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                 </svg>
-              </div>
+                Filters
+              </button>
 
-              {/* Filter Button */}
-              <div className="relative">
-                <button
-                  onClick={toggleFilters}
-                  className="px-4 xs:px-6 py-2.5 xs:py-3 text-sm xs:text-base bg-[#7C805A] text-white rounded-lg hover:bg-[#6A7150] transition-all duration-200 shadow-md sm:shadow-lg flex items-center gap-1.5 xs:gap-2"
-                >
-                  <svg className="w-4 xs:w-5 h-4 xs:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                  </svg>
-                  Filters
-                </button>
+              {/* Filter Popup */}
+              {showFilters && (
+                <div className="filter-container absolute top-full left-0 sm:right-0 mt-2 w-72 xs:w-80 sm:w-64 bg-white rounded-lg shadow-xl border border-gray-200 p-3 xs:p-4 z-10">
+                  <div className="space-y-3 xs:space-y-4">
+                    {/* Category Filter */}
+                    <div>
+                      <label className="block text-xs xs:text-sm font-medium text-gray-700 mb-1 xs:mb-2">Category</label>
+                      <select
+                        value={selectedCategory}
+                        onChange={(e) => handleCategoryFilterChange(e.target.value)}
+                        className="w-full px-2.5 xs:px-3 py-1.5 xs:py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                      >
+                        <option value="all">All Categories</option>
+                        <option value="women">Women</option>
+                        <option value="men">Men</option>
+                        <option value="kids">Kids</option>
+                      </select>
+                    </div>
 
-                {/* Filter Popup */}
-                {showFilters && (
-                  <div className="filter-container absolute top-full left-0 sm:right-0 mt-2 w-72 xs:w-80 sm:w-64 bg-white rounded-lg shadow-xl border border-gray-200 p-3 xs:p-4 z-10">
-                    <div className="space-y-3 xs:space-y-4">
-                      {/* Category Filter */}
-                      <div>
-                        <label className="block text-xs xs:text-sm font-medium text-gray-700 mb-1 xs:mb-2">Category</label>
-                        <select
-                          value={selectedCategory}
-                          onChange={(e) => handleCategoryFilterChange(e.target.value)}
-                          className="w-full px-2.5 xs:px-3 py-1.5 xs:py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
-                        >
-                          <option value="all">All Categories</option>
-                          <option value="women">Women</option>
-                          <option value="men">Men</option>
-                          <option value="kids">Kids</option>
-                        </select>
-                      </div>
+                    {/* Price Range Filter */}
+                    <div>
+                      <label className="block text-xs xs:text-sm font-medium text-gray-700 mb-1 xs:mb-2">Price Range</label>
+                      <select
+                        value={priceRange}
+                        onChange={(e) => setPriceRange(e.target.value)}
+                        className="w-full px-2.5 xs:px-3 py-1.5 xs:py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                      >
+                        <option value="">All Prices</option>
+                        <option value="0-50">$0 - $50</option>
+                        <option value="50-100">$50 - $100</option>
+                        <option value="100-150">$100 - $150</option>
+                        <option value="150+">$150+</option>
+                      </select>
+                    </div>
 
-                      {/* Price Range Filter */}
-                      <div>
-                        <label className="block text-xs xs:text-sm font-medium text-gray-700 mb-1 xs:mb-2">Price Range</label>
-                        <select
-                          value={priceRange}
-                          onChange={(e) => setPriceRange(e.target.value)}
-                          className="w-full px-2.5 xs:px-3 py-1.5 xs:py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
-                        >
-                          <option value="">All Prices</option>
-                          <option value="0-50">$0 - $50</option>
-                          <option value="50-100">$50 - $100</option>
-                          <option value="100-150">$100 - $150</option>
-                          <option value="150+">$150+</option>
-                        </select>
-                      </div>
+                    {/* Sort By */}
+                    <div>
+                      <label className="block text-xs xs:text-sm font-medium text-gray-700 mb-1 xs:mb-2">Sort By</label>
+                      <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="w-full px-2.5 xs:px-3 py-1.5 xs:py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
+                      >
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Name A-Z</option>
+                      </select>
+                    </div>
 
-                      {/* Sort By */}
-                      <div>
-                        <label className="block text-xs xs:text-sm font-medium text-gray-700 mb-1 xs:mb-2">Sort By</label>
-                        <select
-                          value={sortBy}
-                          onChange={(e) => setSortBy(e.target.value)}
-                          className="w-full px-2.5 xs:px-3 py-1.5 xs:py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7C805A] focus:border-transparent"
-                        >
-                          <option value="newest">Newest First</option>
-                          <option value="oldest">Oldest First</option>
-                          <option value="price-low">Price: Low to High</option>
-                          <option value="price-high">Price: High to Low</option>
-                          <option value="name">Name A-Z</option>
-                        </select>
-                      </div>
+                    {/* Special Filters */}
+                    <div className="space-y-1.5 xs:space-y-2">
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={showFeaturedOnly}
+                          onChange={(e) => setShowFeaturedOnly(e.target.checked)}
+                          className="mr-2 h-3.5 xs:h-4 w-3.5 xs:w-4 text-[#7C805A] focus:ring-[#7C805A] border-gray-300 rounded"
+                        />
+                        <span className="text-xs xs:text-sm text-gray-700">Featured Only</span>
+                      </label>
 
-                      {/* Special Filters */}
-                      <div className="space-y-1.5 xs:space-y-2">
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            checked={showFeaturedOnly}
-                            onChange={(e) => setShowFeaturedOnly(e.target.checked)}
-                            className="mr-2 h-3.5 xs:h-4 w-3.5 xs:w-4 text-[#7C805A] focus:ring-[#7C805A] border-gray-300 rounded"
-                          />
-                          <span className="text-xs xs:text-sm text-gray-700">Featured Only</span>
-                        </label>
-                        
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            checked={showBestsellersOnly}
-                            onChange={(e) => setShowBestsellersOnly(e.target.checked)}
-                            className="mr-2 h-3.5 xs:h-4 w-3.5 xs:w-4 text-[#7C805A] focus:ring-[#7C805A] border-gray-300 rounded"
-                          />
-                          <span className="text-xs xs:text-sm text-gray-700">Bestsellers Only</span>
-                        </label>
-                      </div>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={showBestsellersOnly}
+                          onChange={(e) => setShowBestsellersOnly(e.target.checked)}
+                          className="mr-2 h-3.5 xs:h-4 w-3.5 xs:w-4 text-[#7C805A] focus:ring-[#7C805A] border-gray-300 rounded"
+                        />
+                        <span className="text-xs xs:text-sm text-gray-700">Bestsellers Only</span>
+                      </label>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Products Grid */}
-        <section className="px-4 pb-16 sm:pb-20">
-          <div className="container mx-auto">
-            {filteredProducts.length === 0 ? (
-              <div className="text-center py-16 xs:py-20">
-                <div className="text-4xl xs:text-5xl sm:text-6xl mb-3 xs:mb-4">🔍</div>
-                <h3 className="text-xl xs:text-2xl font-light text-[#7C805A] mb-2 drop-shadow-lg">No products found</h3>
-                <p className="text-sm xs:text-base text-[#7C805A] font-light drop-shadow-md px-4">Try adjusting your search or filter criteria</p>
+      {/* Products Grid */}
+      <section className="px-4 pb-16 sm:pb-20">
+        <div className="container mx-auto">
+          {filteredProducts.length === 0 ? (
+            <div className="text-center py-16 xs:py-20">
+              <div className="text-4xl xs:text-5xl sm:text-6xl mb-3 xs:mb-4">🔍</div>
+              <h3 className="text-xl xs:text-2xl font-light text-[#7C805A] mb-2 drop-shadow-lg">No products found</h3>
+              <p className="text-sm xs:text-base text-[#7C805A] font-light drop-shadow-md px-4">Try adjusting your search or filter criteria</p>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 xs:gap-6 sm:gap-8">
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                  />
+                ))}
               </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 xs:gap-6 sm:gap-8">
-                  {filteredProducts.map((product) => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      onAddToCart={handleAddToCart}
-                    />
-                  ))}
-                </div>
-                <div className="mt-8 flex items-center justify-center gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="px-4 py-2 rounded-lg border border-[#7C805A]/40 text-[#7C805A] disabled:opacity-50"
-                  >
-                    Previous
-                  </button>
-                  <span className="text-[#7C805A]">Page {page}</span>
-                  <button
-                    type="button"
-                    onClick={() => setPage((p) => p + 1)}
-                    disabled={products.length < PAGE_SIZE}
-                    className="px-4 py-2 rounded-lg border border-[#7C805A]/40 text-[#7C805A] disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </section>
-      </main>
+              <div className="mt-8 flex items-center justify-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="px-4 py-2 rounded-lg border border-[#7C805A]/40 text-[#7C805A] disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <span className="text-[#7C805A]">Page {page}</span>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => p + 1)}
+                  disabled={products.length < PAGE_SIZE}
+                  className="px-4 py-2 rounded-lg border border-[#7C805A]/40 text-[#7C805A] disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+    </main>
   );
 }
 
@@ -412,9 +412,9 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header 
-        cartItems={cartItems} 
-        onCartToggle={() => setIsCartOpen(!isCartOpen)} 
+      <Header
+        cartItems={cartItems}
+        onCartToggle={() => setIsCartOpen(!isCartOpen)}
       />
       <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center text-[#7C805A]">Loading...</div>}>
         <ProductsContent
@@ -429,11 +429,11 @@ export default function ProductsPage() {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         items={cartItems}
-        onUpdateQuantity={(productId: number, quantity: number) => {
+        onUpdateQuantity={(productId: string | number, quantity: number) => {
           cartManager.updateQuantity(productId, quantity);
           setCartItems(cartManager.getItems());
         }}
-        onRemoveItem={(productId: number) => {
+        onRemoveItem={(productId: string | number) => {
           cartManager.removeItem(productId);
           setCartItems(cartManager.getItems());
         }}

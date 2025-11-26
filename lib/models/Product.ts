@@ -1,8 +1,7 @@
-import mongoose, { Schema, Model } from 'mongoose';
+import mongoose, { Schema, Model, Document } from 'mongoose';
 
-export interface IProduct {
-    _id?: string;
-    id?: number;
+export interface IProduct extends Document {
+    id: string | number;
     name: string;
     description: string;
     price: number;
@@ -10,8 +9,8 @@ export interface IProduct {
     category: string;
     featured: boolean;
     bestseller: boolean;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const ProductSchema = new Schema<IProduct>(
@@ -28,8 +27,10 @@ const ProductSchema = new Schema<IProduct>(
         timestamps: true,
         toJSON: {
             virtuals: true,
-            transform: function (doc, ret) {
-                ret.id = ret._id;
+            transform: function (doc, ret: any) {
+                ret.id = ret._id.toString();
+                delete ret._id;
+                delete ret.__v;
                 return ret;
             },
         },

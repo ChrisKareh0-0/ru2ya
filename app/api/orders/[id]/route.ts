@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDatabase } from '@/lib/database';
+import { connectDB } from '@/lib/mongodb';
+import Order from '@/lib/models/Order';
 
 export async function PUT(
   request: NextRequest,
@@ -17,16 +18,16 @@ export async function PUT(
       );
     }
 
-    const db = getDatabase();
-    
+    await connectDB();
+
     // Update order status
-    const updateOrder = db.prepare(`
-      UPDATE orders SET status = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?
-    `);
+    const updatedOrder = await Order.findOneAndUpdate(
+      { id: id }, // Search by custom id field, not _id
+      { status: status },
+      { new: true }
+    );
 
-    const result = updateOrder.run(status, id);
-
-    if (result.changes === 0) {
+    if (!updatedOrder) {
       return NextResponse.json(
         { error: 'Order not found' },
         { status: 404 }
@@ -51,22 +52,13 @@ export async function DELETE(
 ) {
   try {
     const { id } = params;
-    const db = getDatabase();
-    
-    // Delete order items first (due to foreign key constraint)
-    const deleteOrderItems = db.prepare(`
-      DELETE FROM order_items WHERE orderId = ?
-    `);
-    deleteOrderItems.run(id);
-    
-    // Delete the order
-    const deleteOrder = db.prepare(`
-      DELETE FROM orders WHERE id = ?
-    `);
-    
-    const result = deleteOrder.run(id);
 
-    if (result.changes === 0) {
+    await connectDB();
+
+    // Delete the order
+    const deletedOrder = await Order.findOneAndDelete({ id: id });
+
+    if (!deletedOrder) {
       return NextResponse.json(
         { error: 'Order not found' },
         { status: 404 }
